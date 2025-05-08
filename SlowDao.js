@@ -6,9 +6,9 @@
 // @author       Your name
 // @match        *://*/*
 // @grant        none
-// @updateURL    https://raw.githubusercontent.com/shhysy/test/main/SlowDao.js
-// @downloadURL  https://raw.githubusercontent.com/shhysy/test/main/SlowDao.js
-// @supportURL   https://github.com/shhysy/test/issues
+// @updateURL    https://raw.githubusercontent.com/shhysy/SlowDao/main/SlowDao.js
+// @downloadURL  https://raw.githubusercontent.com/shhysy/SlowDao/main/SlowDao.js
+// @supportURL   https://github.com/shhysy/SlowDao/issues
 // ==/UserScript==
 
 (function() {
