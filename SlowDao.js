@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.22
+// @version      1.23
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -20,19 +20,14 @@
             isBaidu = true;
         }
     }, 3000);
-
-
-
     if (window.location.hostname !== 'chat.chainopera.ai') {
         return;
     }
-
     setTimeout(() => {
         if(!isBaidu){
             location.reload();
         }
     }, 300000);
-    
 
     // 配置参数
     const config = {
@@ -139,7 +134,7 @@
         let successCount = 0;
         let currentIndex = 0;
 
-        const targetSuccessCount = Math.floor(Math.random() * 6) + 13; // 生成13-18之间的随机数
+        const targetSuccessCount = Math.floor(Math.random() * 6) + 23; // 生成13-18之间的随机数
         while (successCount < targetSuccessCount) {
             try {
                 // 获取当前要点击的按钮
@@ -405,6 +400,8 @@
         main();
     }
 })();
+
+
 
 (function() {
     'use strict';
