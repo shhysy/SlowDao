@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.25
+// @version      1.26
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -25,8 +25,8 @@
         return;
     }
     setInterval(() => {
-        if (document.body.style.zoom != '50%'){
-            document.body.style.zoom = '50%'
+        if (document.body.style.zoom != '33%'){
+            document.body.style.zoom = '33%'
         }
     }, 3000);
 
