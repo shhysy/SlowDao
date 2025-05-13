@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.26
+// @version      1.27
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -345,18 +345,31 @@
         try {
             checkDomain();
 
-            // 检查钱包是否已经连接
-            const connectedWalletButton = await waitForElement('button.inline-flex.items-center.justify-center span.flex.gap-2.items-center.text-xs svg.lucide-wallet', 5000);
-            if (connectedWalletButton && connectedWalletButton.closest('span').textContent.includes('0x')) {
-                console.log('钱包已经连接，跳过MetaMask连接步骤');
-            } else {
-                // 执行MetaMask连接
-                await retryOperation(clickMetaMask);
-
-                // 等待一段时间让钱包连接完成
-                await new Promise(resolve => setTimeout(resolve, 13000));
-
-
+            // 持续尝试连接钱包直到成功
+            let walletConnected = false;
+            while (!walletConnected) {
+                // 检查钱包是否已经连接
+                const connectedWalletButton = await waitForElement('button.inline-flex.items-center.justify-center span.flex.gap-2.items-center.text-xs svg.lucide-wallet', 5000);
+                if (connectedWalletButton && connectedWalletButton.closest('span').textContent.includes('0x')) {
+                    console.log('钱包已经连接，继续执行后续操作');
+                    walletConnected = true;
+                } else {
+                    console.log('钱包未连接，尝试连接MetaMask');
+                    // 执行MetaMask连接
+                    await retryOperation(clickMetaMask);
+                    // 等待一段时间让钱包连接完成
+                    await new Promise(resolve => setTimeout(resolve, 13000));
+                    
+                    // 再次检查钱包连接状态
+                    const checkWalletButton = await waitForElement('button.inline-flex.items-center.justify-center span.flex.gap-2.items-center.text-xs svg.lucide-wallet', 5000);
+                    if (checkWalletButton && checkWalletButton.closest('span').textContent.includes('0x')) {
+                        console.log('钱包连接成功');
+                        walletConnected = true;
+                    } else {
+                        console.log('钱包连接失败，重试中...');
+                        await new Promise(resolve => setTimeout(resolve, 5000)); // 等待5秒后重试
+                    }
+                }
             }
 
             await new Promise(resolve => setTimeout(resolve, 3000));
