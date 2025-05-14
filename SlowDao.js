@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.29
+// @version      1.30
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -20,15 +20,16 @@
             isBaidu = true;
         }
     }, 3000);
-
-    if (window.location.hostname !== 'chat.chainopera.ai') {
-        return;
-    }
     setInterval(() => {
         if (document.body.style.zoom != '33%'){
             document.body.style.zoom = '33%'
         }
     }, 3000);
+
+
+    if (window.location.hostname !== 'chat.chainopera.ai') {
+        return;
+    }
 
     setInterval(() => {
         const metamaskButton = waitForElement('button[type="button"] img[src="/web3-metamask.png"]');
