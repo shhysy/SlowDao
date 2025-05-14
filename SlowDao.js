@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.27
+// @version      1.28
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -29,6 +29,17 @@
             document.body.style.zoom = '33%'
         }
     }, 3000);
+
+    setInterval(() => {
+        const metamaskButton = waitForElement('button[type="button"] img[src="/web3-metamask.png"]');
+        if (metamaskButton) {
+            console.log('找到MetaMask按钮，准备点击');
+            metamaskButton.parentElement.click();
+            console.log('已点击MetaMask按钮');
+        } else {
+            console.log('未找到MetaMask按钮，继续执行');
+        }
+    }, 60000);
 
     setTimeout(() => {
         window.location.href = 'https://www.360.com';
