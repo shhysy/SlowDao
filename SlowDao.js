@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.28
+// @version      1.29
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -16,7 +16,7 @@
     var isBaidu = false;
     setInterval(() => {
         if (window.location.hostname == 'www.baidu.com' && !isBaidu) {
-            window.location.href = 'https://chat.chainopera.ai/login';
+            window.location.href = 'https://app.gata.xyz?invite_code=91p11vx9';
             isBaidu = true;
         }
     }, 3000);
@@ -41,9 +41,9 @@
         }
     }, 60000);
 
-    setTimeout(() => {
-        window.location.href = 'https://www.360.com';
-    }, 2000000);
+    // setTimeout(() => {
+    //     window.location.href = 'https://www.360.com';
+    // }, 2000000);
 
     // 配置参数
     const config = {
