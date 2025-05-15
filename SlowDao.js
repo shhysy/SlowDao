@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.34
+// @version      1.35
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -1227,6 +1227,19 @@
     if (window.location.hostname !== 'stake.apr.io') {
         return;
     }
+
+
+    const tourl = setInterval(() => {
+        //新增一个检测按钮文本如果存在跳转下一个
+        const buttons = document.querySelectorAll('button');
+        for (const button of buttons) {
+            const buttonLabel = button.querySelector('.mantine-Button-label');
+            if (buttonLabel && buttonLabel.textContent === "Insufficient balance to cover gas fees") {
+                window.location.href = 'https://app.crystal.exchange/swap';
+                clearInterval(tourl);
+            }
+        }
+    }, 2000);
 
     function findButtonInShadow(root, text) {
         // 查找当前root下所有button
