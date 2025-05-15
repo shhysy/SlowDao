@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.35
+// @version      1.36
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -1081,8 +1081,10 @@
         return;
     }
 
+
+
     // 目标路径
-    const targetUrl = "";
+    const targetUrl = "https://app.crystal.exchange";
     if (window.location.href.includes(targetUrl)) {
     // 状态标志，防止重复点击
     let connectButtonClicked = false;
