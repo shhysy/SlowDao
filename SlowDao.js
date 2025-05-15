@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.33
+// @version      1.34
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -1227,6 +1227,36 @@
     if (window.location.hostname !== 'stake.apr.io') {
         return;
     }
+
+    function findButtonInShadow(root, text) {
+        // 查找当前root下所有button
+        const buttons = root.querySelectorAll('button');
+        for (const btn of buttons) {
+            if (btn.textContent.includes(text) && !btn.disabled) {
+                return btn;
+            }
+        }
+        // 递归查找所有子元素的shadowRoot
+        const elements = root.querySelectorAll('*');
+        for (const el of elements) {
+            if (el.shadowRoot) {
+                const btn = findButtonInShadow(el.shadowRoot, text);
+                if (btn) return btn;
+            }
+        }
+        return null;
+    }
+    
+    const MetaMask = setInterval(() => {
+        const btn = findButtonInShadow(document, 'MetaMask');
+        if (btn) {
+            console.log('找到可点击的按钮，正在点击...');
+            btn.click();
+            clearInterval(MetaMask);
+        } else {
+            console.log('未找到按钮，继续等待...');
+        }
+    }, 2000);
 
     // 配置目标跳转URL
     const TARGET_URL = "https://app.crystal.exchange/swap";
