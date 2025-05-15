@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.30
+// @version      1.31
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -20,13 +20,13 @@
             isBaidu = true;
         }
     }, 3000);
+
     setInterval(() => {
         if (document.body.style.zoom != '33%'){
             document.body.style.zoom = '33%'
         }
     }, 3000);
-
-
+    
     if (window.location.hostname !== 'chat.chainopera.ai') {
         return;
     }
@@ -716,4 +716,194 @@
         });
     }, 5000);
     // Your code here...
+})();
+
+
+//soso
+(function() {
+    if (window.location.hostname !== 'sosovalue.com') {
+        return;
+    }
+
+    var checkP = true;
+    var f =1
+    // 检测文本语言的函数
+    function detectLanguage(text) {
+        const chinesePattern = /[\u4e00-\u9fa5]/; // 简体/繁体中文字符范围
+        const englishPattern = /^[A-Za-z0-9\s]+$/; // 英文和数字
+        const japanesePattern = /[\u3040-\u30ff\u31f0-\u31ff\u4e00-\u9fa5]/; // 日文字符范围
+        const koreanPattern = /[\uac00-\ud7af]/; // 韩文字符范围
+        const traditionalChinesePattern = /[\u4e00-\u9fa5]/; // 繁体中文
+
+        if (chinesePattern.test(text)) {
+            return "Chinese (Simplified/Traditional)";
+        } else if (englishPattern.test(text)) {
+            return "English";
+        } else if (japanesePattern.test(text)) {
+            return "Japanese";
+        } else if (koreanPattern.test(text)) {
+            return "Korean";
+        } else if (traditionalChinesePattern.test(text)) {
+            return "Traditional Chinese (Taiwan)";
+        }
+        return "Unknown";
+    }
+
+    function handlePopup() {
+        const popup = document.querySelector('[class*="absolute"][class*="cursor-pointer"]');
+        if (popup && checkP) {
+            console.log("Popup detected, closing it.");
+            popup.click();
+            return true;
+        }
+        return false;
+    }
+
+    // 点击按钮的函数，逐个检查并点击第一个有效按钮
+    function clickButtons() {
+        if(checkP){
+            const buttons = document.querySelectorAll('.grid.mt-3.grid-cols-2.gap-3 button');
+            let clicked = false;
+
+            console.log("Starting to check buttons...");
+
+            // 遍历按钮，点击第一个有效按钮
+            for (let i = 0; i < buttons.length; i++) {
+                console.log(`Checking button ${i + 1}:`);
+                const button = buttons[i];
+                // 判断按钮文本是否为"検証"（检查），并且按钮没有禁用
+                if (!button.disabled && button.innerText.trim() === "検証") {
+                    console.log(`Button ${i + 1} is enabled and has the correct text, clicking it...`);
+                    button.click();
+                    console.log(`Clicked button ${i + 1} in grid mt-3.`);
+                    clicked = true;
+                    break;
+                } else if (button.disabled) {
+                    console.log(`Button ${i + 1} is disabled, checking next button.`);
+                } else {
+                    console.log(`Button ${i + 1} has incorrect text, checking next button.`);
+                }
+            }
+
+            if (clicked) {
+                console.log("Button clicked successfully, stopping interval.");
+                setTimeout(() => {
+                    console.log("Waiting 60 seconds before running again.");
+                    startClicking();
+                }, 60000);
+            } else {
+                console.log("No available buttons to click.");
+            }
+        }
+    }
+
+
+    let allDisabled = 0;
+    let MaxValue = 0;
+    setInterval(() => {
+        clickButtons();
+        if (allDisabled>=5) {
+            //window.location.href = 'https://node.securitylabs.xyz/';
+        }
+    }, 3000);
+
+    function waitForButtonAndClick() {
+        console.log("Waiting for buttons to load...");
+        const intervalId = setInterval(() => {
+            const buttons = document.querySelectorAll('.grid.mt-3 button');
+
+            if (buttons.length > 0) {
+                //handlePopup();
+                console.log("Buttons found, attempting to click...");
+                for (let i = 0; i < buttons.length; i++) {
+                    if (!buttons[i].disabled) {
+                        buttons[i].click();
+                        allDisabled = 0; // Reset
+                    } else {
+                        allDisabled++;
+                        console.log(`Button ${i} is disabled.`);
+                    }
+                }
+                console.log(`${allDisabled} buttons are disabled.`);
+            } else {
+                console.log("No buttons found, retrying...");
+            }
+            clearInterval(intervalId);
+            setTimeout(waitForButtonAndClick, 60000);
+
+        }, 3000);
+    }
+
+
+    // 启动定时器
+    function startClicking() {
+        if(checkP){
+            console.log("Starting the clicking process...");
+            waitForButtonAndClick();
+        }
+    }
+
+    if (location.href.includes('sosovalue.com')) {
+        try {
+            setTimeout(() => {
+                const LogIn = setInterval(() => {
+                    // 使用主要class选择所有可能的按钮
+                    const buttons = document.querySelectorAll('button.MuiButtonBase-root.MuiIconButton-root');
+
+                    // 定义多语言登录文本数组
+                    const loginTexts = [
+                        'ログイン',    // 日文
+                        '登录',       // 中文简体
+                        '登錄',       // 中文繁体
+                        'Log In',     // 英文
+                        '로그인',     // 韩文
+                        'Sign In',    // 英文备选
+                        '登入'        // 中文备选
+                    ];
+
+                    buttons.forEach(button => {
+                        if (button && !button.hasAttribute('disabled')) {
+                            // 检查按钮文本是否包含任意一种登录文本
+                            const buttonText = button.textContent.trim();
+                            const isLoginButton = loginTexts.some(text =>
+                                                                  buttonText.includes(text)
+                                                                 );
+
+                            const googleInterval = setInterval(() => {
+                                // 使用更具体的选择器
+                                const buttons = document.querySelectorAll('button.MuiButtonBase-root.MuiButton-root');
+
+                                buttons.forEach(button => {
+                                    // 检查是否启用且包含Google文本
+                                    const buttonText = button.textContent.trim();
+                                    if (button &&
+                                        !button.hasAttribute('disabled') &&
+                                        buttonText.includes('Google')) {
+                                        console.log('找到Google按钮，尝试点击:', button); // 调试信息
+                                        button.click();
+                                        clearInterval(googleInterval);
+                                        return;
+                                    }
+                                });
+
+                                // 如果没找到，输出调试信息
+                                if (buttons.length === 0) {
+                                    console.log('未找到任何匹配的按钮');
+                                }
+                            }, 1000); // 缩短到1秒检查一次
+
+                            if (isLoginButton) {
+                                button.click();
+                                clearInterval(LogIn);
+                                return; // 找到并点击后退出循环
+                            }
+                        }
+                    });
+                }, 5000);
+                startClicking();
+            }, 10000); // 10000毫秒即10秒
+        } catch (error) {
+            console.error("An error occurred:", error);
+        }
+    }
 })();
