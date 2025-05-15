@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.32
+// @version      1.33
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -1041,7 +1041,7 @@
                                         if (successElement.textContent.trim() === 'All Done!') {
                                             console.log('Operation completed successfully: All Done!');
                                             // 跳转到下一个 URL（请替换为实际目标 URL）
-                                            //window.location.href = 'https://0xvm.com/honor';
+                                            window.location.href = 'www.360.com';
                                         } else {
                                             console.log('Did not find "All Done!". Retrying...');
                                             waitForElement('div._SuccessTitle_1542z_137', arguments.callee, Infinity, 5000);
