@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.31
+// @version      1.32
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -906,4 +906,503 @@
             console.error("An error occurred:", error);
         }
     }
+})();
+//stake.apr.io
+//app.crystal.exchange
+//https://monad-test.kinza.finance/#/details/MON
+
+//MONAD SUPER
+(function() {
+    'use strict';
+
+    if (window.location.href !== 'https://monad-test.kinza.finance/#/details/MON') {
+        return;
+    }
+
+    // 等待页面加载完成
+    function waitForElement(selector, callback, maxAttempts = Infinity, interval = 3000) {
+        let attempts = 0;
+        const checkExist = setInterval(() => {
+            const element = document.querySelector(selector);
+            if (element) {
+                clearInterval(checkExist);
+                callback(element);
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkExist);
+                console.log(`Element ${selector} not found after ${maxAttempts} attempts. Retrying...`);
+                waitForElement(selector, callback, Infinity, interval);
+            }
+            attempts++;
+        }, interval);
+    }
+
+    // 查找按钮通过文本内容
+    function findButtonByText(text, callback) {
+        const retryFindButton = () => findButtonByText(text, callback); // 定义重试函数
+        waitForElement('button', (buttons) => {
+            const buttonList = document.querySelectorAll('button');
+            for (let button of buttonList) {
+                if (button.textContent.trim() === text) {
+                    callback(button);
+                    return;
+                }
+            }
+            console.log(`Button with text "${text}" not found. Retrying in 5 seconds...`);
+            setTimeout(retryFindButton, 5000);
+        }, Infinity, 3000);
+    }
+
+    // 检查按钮是否可点击
+    function isButtonClickable(button) {
+        if (!button) return false;
+        const isDisabled = button.hasAttribute('disabled') || button.classList.contains('ant-btn-disabled');
+        const isVisible = button.style.display !== 'none' && button.style.visibility !== 'hidden' && window.getComputedStyle(button).display !== 'none';
+        return !isDisabled && isVisible;
+    }
+
+    // 检查输入框是否为空
+    function isInputEmpty(input) {
+        if (!input) return true;
+        return !input.value || input.value.trim() === '';
+    }
+
+    // 设置输入框值并触发事件（使用原生 set 方法）
+    function setInputValue(input, value) {
+        if (!input) return;
+
+        // 使用 Object.defineProperty 定义 value 的 set 方法
+        Object.defineProperty(input, 'value', {
+            set: function(newValue) {
+                this._value = newValue; // 内部存储值
+                // 触发输入事件以模拟用户输入
+                this.dispatchEvent(new Event('input', { bubbles: true }));
+                // 触发 change 事件，确保状态更新
+                this.dispatchEvent(new Event('change', { bubbles: true }));
+                // 模拟键盘事件（可选，某些框架可能需要）
+                this.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+                this.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', bubbles: true }));
+                console.log(`Set input value to: ${newValue} using native set`);
+            },
+            get: function() {
+                return this._value || '';
+            },
+            configurable: true,
+            enumerable: true
+        });
+
+        // 设置值
+        input.value = value; // 触发 set 方法
+
+        // 确保 value 属性被正确设置（部分浏览器可能需要）
+        if (input.value !== value) {
+            input._value = value; // 直接设置内部值
+            // 再次触发事件以确保同步
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    }
+
+    // 第二步：点击 "Supply" 按钮
+    function handleSupplyButton() {
+        findButtonByText('Supply', (supplyButton) => {
+            if (isButtonClickable(supplyButton)) {
+                supplyButton.click();
+                console.log('Clicked "Supply" button. Waiting 5 seconds...');
+            } else {
+                console.log('"Supply" button is not clickable or not ready. Retrying in 5 seconds...');
+                setTimeout(handleSupplyButton, 5000);
+                return;
+            }
+
+            // 增加延迟，确保输入框加载
+            setTimeout(() => {
+                // 第三步：查找并检查输入框
+                waitForElement('input[type="text"]', (inputField) => {
+                    if (isInputEmpty(inputField)) {
+                        const randomValue = (Math.random() * 0.009 + 0.001).toFixed(3);
+                        setInputValue(inputField, randomValue);
+
+                        // 增加延迟，确保输入被处理
+                        setTimeout(() => {
+                            // 第四步：点击 "Supply MON" 按钮
+                            function handleSupplyMonButton() {
+                                findButtonByText('Supply MON', (supplyMonButton) => {
+                                    if (isButtonClickable(supplyMonButton)) {
+                                        supplyMonButton.click();
+                                        console.log('Clicked "Supply MON" button. Waiting for "All Done!" with infinite retry...');
+                                    } else {
+                                        console.log('"Supply MON" button is not clickable or not ready. Retrying in 5 seconds...');
+                                        setTimeout(handleSupplyMonButton, 5000);
+                                        return;
+                                    }
+
+                                    // 第五步：等待 "All Done!" 元素出现并检查，无限重试直到成功
+                                    waitForElement('div._SuccessTitle_1542z_137', (successElement) => {
+                                        if (successElement.textContent.trim() === 'All Done!') {
+                                            console.log('Operation completed successfully: All Done!');
+                                            // 跳转到下一个 URL（请替换为实际目标 URL）
+                                            //window.location.href = 'https://0xvm.com/honor';
+                                        } else {
+                                            console.log('Did not find "All Done!". Retrying...');
+                                            waitForElement('div._SuccessTitle_1542z_137', arguments.callee, Infinity, 5000);
+                                        }
+                                    }, Infinity, 5000); // 每5秒检查一次，无限重试
+                                });
+                            }
+                            handleSupplyMonButton();
+                        }, 10000); // 等待10秒，确保输入被处理和后端响应
+                    } else {
+                        console.log('Input field is not empty, skipping input. Retrying in 5 seconds...');
+                        setTimeout(() => waitForElement('input[type="text"]', (inputField) => handleSupplyButton(), Infinity, 3000), 5000);
+                    }
+                }, Infinity, 3000); // 每3秒检查一次，无限重试
+            }, 5000); // 等待5秒，确保 "Supply" 按钮点击后页面更新
+        });
+    }
+
+    const Supply = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Supply MON') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+            }
+        });
+    }, 15000);
+
+    // 启动脚本
+    handleSupplyButton();
+})();
+
+
+//MONAD
+(function() {
+    if (window.location.hostname !== 'app.crystal.exchange') {
+        return;
+    }
+
+    // 目标路径
+    const targetUrl = "";
+    if (window.location.href.includes(targetUrl)) {
+    // 状态标志，防止重复点击
+    let connectButtonClicked = false;
+    let metaMaskButtonClicked = false;
+
+    // 检查当前路径并执行点击操作
+    function checkPathAndClick() {
+
+            console.log("路径匹配，开始执行按钮点击操作");
+
+            // 检查第一个按钮（Connect Wallet）
+            if (!connectButtonClicked) {
+                const connectButton = document.querySelector('button.connect-button');
+                if (connectButton) {
+                    connectButton.click();
+                    connectButtonClicked = true;
+                    console.log("已点击 'Connect Wallet' 按钮");
+                }
+            }
+
+            // 检查第二个按钮（MetaMask）
+            if (connectButtonClicked && !metaMaskButtonClicked) {
+                const walletButtons = document.querySelectorAll('button.wallet-option');
+                let metaMaskButton = null;
+
+                walletButtons.forEach(button => {
+                    const walletName = button.querySelector('span.wallet-name');
+                    if (walletName && walletName.textContent.trim() === "MetaMask") {
+                        metaMaskButton = button;
+                    }
+                });
+
+                if (metaMaskButton) {
+                    metaMaskButton.click();
+                    metaMaskButtonClicked = true;
+                    console.log("已点击 'MetaMask' 按钮");
+                }
+            }
+
+    }
+
+    // 使用定时器定期检查
+    const checkInterval = setInterval(() => {
+        checkPathAndClick();
+
+        // 如果两个按钮都已点击，停止定时器
+        if (connectButtonClicked && metaMaskButtonClicked) {
+            clearInterval(checkInterval);
+            console.log("所有按钮已点击，脚本停止运行");
+        }
+    }, 1000); // 每秒检查一次
+    setInterval(() => {
+        const button = document.querySelector('.swap-button')
+        if (button.textContent.trim() === 'Swap') {
+            // 检查按钮是否可点击（未被禁用）
+            if (!button.disabled) {
+                // 模拟点击按钮
+                button.click();
+                console.log('已点击 "Swap" 按钮');
+            } else {
+                console.log('按钮处于禁用状态，无法点击');
+            }
+        }
+    }, 30000);
+    var falg =true
+    setInterval(() => {
+        var usdc = document.querySelector("#root > div > div.app-container > div.trade-container > div > div.right-column > div > div.swapmodal > div.inputbg > div.inputbutton1container > button > span")
+        if(usdc && usdc.innerHTML=='USDC'){
+            var usdcbtn = document.querySelector("#root > div > div.app-container > div.trade-container > div > div.right-column > div > div.swapmodal > div.inputbg > div.inputbutton1container > button")
+            if(usdcbtn){
+                usdcbtn.click();
+            }
+        }
+        const buttons = document.querySelectorAll('.tokenbutton');
+        buttons.forEach(button => {
+            const tokenName = button.querySelector('.tokenlistname').textContent;
+            if (tokenName === 'MON') {
+                // 模拟点击事件
+                button.click();
+                console.log('已点击MON按钮');
+            }
+        });
+        // 获取输入框元素
+        const input = document.querySelector('.input');
+
+        // 检查输入框是否为空
+        if (!input.value) {
+            // 生成 0.0001 到 0.0005 之间的随机数
+            const min = 0.0001;
+            const max = 0.0005;
+            const randomNumber = (Math.random() * (max - min) + min).toFixed(4); // 保留4位小数
+            // 确保输入框获得焦点
+            input.focus();
+            // 使用 document.execCommand 插入随机数
+            document.execCommand('insertText', false, randomNumber);
+            console.log(`已向输入框插入随机数字: ${randomNumber}`);
+        } else {
+            console.log('输入框不为空，无需插入');
+            const button = document.querySelector('.swap-button')
+            if (button.textContent.trim() === 'Swap' && falg) {
+                // 检查按钮是否可点击（未被禁用）
+                if (!button.disabled) {
+                    // 模拟点击按钮
+                    button.click();
+                    falg=false
+                    console.log('已点击 "Swap" 按钮');
+                } else {
+                    console.log('按钮处于禁用状态，无法点击');
+                }
+            }
+            const link = document.querySelector('.view-transaction');
+            if(link){
+                setTimeout(() => {
+                    window.location.href ='https://monad-test.kinza.finance/#/details/MON';
+                }, 40000);
+            }
+        }
+    }, 1000);
+
+
+    // 页面加载完成后首次运行
+    window.addEventListener('load', () => {
+        console.log("页面加载完成，开始检查路径和按钮");
+        checkPathAndClick();
+    });
+
+    // 监听 DOM 变化，但避免重复点击
+    const observer = new MutationObserver(() => {
+        if (!connectButtonClicked || !metaMaskButtonClicked) {
+            checkPathAndClick();
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+         }
+})();
+
+
+
+//MONAD STAK
+(function() {
+    'use strict';
+    if (window.location.hostname !== 'stake.apr.io') {
+        return;
+    }
+
+    // 配置目标跳转URL
+    const TARGET_URL = "https://app.crystal.exchange/swap";
+
+    // 第一步：判断路径
+
+    // 辅助函数：等待元素出现
+    function waitForElement(selector, callback, maxAttempts = 20, interval = 500) {
+        return new Promise((resolve) => {
+            let attempts = 0;
+            const checkElement = setInterval(() => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    clearInterval(checkElement);
+                    resolve(element);
+                } else if (attempts >= maxAttempts) {
+                    clearInterval(checkElement);
+                    console.log(`未找到元素: ${selector}`);
+                    resolve(null);
+                } else {
+                    attempts++;
+                }
+            }, interval);
+        });
+    }
+
+    // 添加监视器来检测存款完成通知
+    function watchForDepositNotification() {
+        const notification = document.querySelector('.m_a49ed24.mantine-Notification-body');
+        if (notification && notification.textContent.includes("Deposit completed")) {
+            console.log("检测到存款完成通知，正在跳转...");
+            window.location.href = TARGET_URL;
+        }
+    }
+
+    // 辅助函数：随机延迟
+    function randomy(min, max) {
+        return new Promise(resolve => setTimeout(resolve, Math.random() * (max - min) + min));
+    }
+
+    // 模拟粘贴输入
+    function simulatePaste(inputElement, inputValue) {
+        inputElement.value = inputValue;
+        return Promise.resolve();
+    }
+
+    // 输入文本函数
+    async function inputText(selector, eventType, inputValue, isPaste = false) {
+        try {
+            const inputElement = await waitForElement(selector);
+            if (!inputElement) {
+                console.log(`Input element ${selector} not found.`);
+                return false;
+            }
+
+            if (inputElement.value !== '') {
+                console.log(`Input field ${selector} is not empty. Skipping input.`);
+                return false;
+            }
+
+            inputElement.focus();
+            await randomy(100, 300);
+
+            if (isPaste) {
+                await simulatePaste(inputElement, inputValue);
+            } else {
+                for (let char of inputValue.toString()) {
+                    document.execCommand('insertText', false, char);
+                    await randomy(50, 150);
+                }
+            }
+
+            inputElement.dispatchEvent(new Event(eventType, { bubbles: true, cancelable: true }));
+            await randomy(100, 300);
+            inputElement.blur();
+
+            if (inputElement.value === inputValue.toString()) {
+                console.log(`Input completed for ${selector}`);
+                return true;
+            } else {
+                console.log(`Input verification failed for ${selector}`);
+                return false;
+            }
+        } catch (error) {
+            console.error(`Error inputting text for ${selector}:`, error);
+            return false;
+        }
+    }
+
+    // 处理输入框和质押按钮
+    async function waitForInputAndStake() {
+        const inputElement = await waitForElement(
+            'input.mantine-Input-input.mantine-NumberInput-input[type="text"][inputmode="numeric"]'
+        );
+        if (inputElement) {
+            const inputValue = inputElement.value.trim();
+            console.log(`当前输入框值: ${inputValue}`);
+
+            if (!inputValue) {
+                const inputSuccess = await inputText(
+                    'input.mantine-Input-input.mantine-NumberInput-input[type="text"][inputmode="numeric"]',
+                    'change',
+                    '0.01',
+                    false
+                );
+                if (inputSuccess) {
+                    console.log("输入框处理完成，等待点击 Stake 按钮");
+                    await waitForStakeButton(inputElement);
+                }
+            } else {
+                console.log("输入框不为空，直接点击 Stake 按钮");
+                await waitForStakeButton(inputElement);
+            }
+        } else {
+            console.log("未找到输入框元素");
+        }
+    }
+
+    // 处理 Stake 按钮
+    async function waitForStakeButton(inputElement) {
+        const stakeButton = await waitForElement(
+            'button.mantine-Button-root[data-variant="gradient"][data-size="lg"]'
+        );
+        if (stakeButton) {
+            const buttonText = stakeButton.querySelector(".mantine-Button-label");
+            if (buttonText && buttonText.textContent === "Stake" && !stakeButton.disabled) {
+                const currentInputValue = inputElement.value.trim();
+                if (currentInputValue) {
+                    console.log("输入框不为空，点击 Stake 按钮");
+                    stakeButton.click();
+                    watchForDepositNotification();
+                } else {
+                    console.log("输入框为空，无法点击 Stake 按钮");
+                }
+            } else {
+                console.log("Stake 按钮不可用或文本不匹配");
+            }
+        } else {
+            console.log("未找到 Stake 按钮");
+        }
+    }
+
+    function scanForConnectButton() {
+        const intervalId = setInterval(() => {
+            const buttons = document.querySelectorAll('button');
+            let initialConnectButton = null;
+
+            for (const button of buttons) {
+                const buttonLabel = button.querySelector('.mantine-Button-label');
+                if (buttonLabel && buttonLabel.textContent === "Connect Wallet" && !button.disabled) {
+                    initialConnectButton = button;
+                    break;
+                }
+            }
+
+            if (initialConnectButton) {
+                console.log("定时器找到初始 'Connect Wallet' 按钮，执行点击并停止扫描");
+                initialConnectButton.click();
+                clearInterval(intervalId); // 找到按钮后停止定时器
+                waitForMetaMaskAndStake();
+            } else {
+                console.log("未找到可用 'Connect Wallet' 按钮，继续扫描...");
+            }
+        }, 1000); // 每 1 秒扫描一次
+    }
+
+    if (window.location.href=="https://stake.apr.io/") {
+        setInterval(() => {
+            waitForStakeButton();
+            waitForInputAndStake();
+        }, 5000);
+        scanForConnectButton();
+
+        setInterval(() => {
+            watchForDepositNotification();
+        }, 2000);
+    }
+
 })();
