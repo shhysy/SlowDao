@@ -1081,7 +1081,23 @@
         return;
     }
 
+    const ConnectWallet =setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            // 检查按钮是否包含 "Continue with Google" 文本并且没有 disabled 属性
+            if (button.textContent.includes('Continue with a wallet') &&
+                !button.hasAttribute('disabled')) {
+                console.log('找到可点击的按钮，正在点击...');
+                button.click();
+                clearInterval(ConnectWallet)
+            } else if (button.hasAttribute('disabled')) {
+                console.log('按钮不可点击，跳过');
+            }
+        });
+    }, 3000);
 
+
+    
 
     // 目标路径
     const targetUrl = "https://app.crystal.exchange";
