@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.49
+// @version      1.50
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -200,11 +200,11 @@
         }
     }, 3000);
 
-    setInterval(() => {
-        if (document.body.style.zoom != '33%'){
-            document.body.style.zoom = '33%'
-        }
-    }, 3000);
+    // setInterval(() => {
+    //     if (document.body.style.zoom != '33%'){
+    //         document.body.style.zoom = '33%'
+    //     }
+    // }, 3000);
     
     if (window.location.hostname !== 'chat.chainopera.ai') {
         return;
