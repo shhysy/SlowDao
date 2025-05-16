@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.50
+// @version      1.51
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -200,11 +200,7 @@
         }
     }, 3000);
 
-    // setInterval(() => {
-    //     if (document.body.style.zoom != '33%'){
-    //         document.body.style.zoom = '33%'
-    //     }
-    // }, 3000);
+
     
     if (window.location.hostname !== 'chat.chainopera.ai') {
         return;
@@ -1122,6 +1118,7 @@
 //https://monad-test.kinza.finance/#/details/MON
 //MONAD STAK
 (function() {
+
     'use strict';
     if (window.location.hostname !== 'stake.apr.io') {
         return;
@@ -1364,6 +1361,7 @@
 })();
 //MONAD crystal
 (function() {
+
     if (window.location.hostname !== 'app.crystal.exchange') {
         return;
     }
@@ -1553,6 +1551,7 @@
 //MONAD SUPER
 (function() {
     'use strict';
+
 
     if (window.location.href !== 'https://monad-test.kinza.finance/#/details/MON') {
             return;
@@ -1762,6 +1761,7 @@
 })();
 //monad trade
 (function() {
+
     if (window.location.hostname !== 'monad.ambient.finance') {
         return;
     }
@@ -1915,6 +1915,7 @@
 })();
 //monad hmonad.xyz
 (function() {
+
     if (window.location.hostname !== 'shmonad.xyz') {
         return;
     }
@@ -2002,6 +2003,13 @@
 })();
 //MONAD https://www.kuru.io/swap        待完善
 (function() {
+    setInterval(() => {
+        if (window.location.hostname !== 'www.kuru.io' || window.location.hostname !== 'shmonad.xyz' || window.location.hostname == 'stake.apr.io' || window.location.hostname == 'app.crystal.exchange' || window.location.hostname == 'monad-test.kinza.finance' || window.location.hostname == 'monad.ambient.finance'){
+            if (document.body.style.zoom != '33%'){
+                document.body.style.zoom = '33%'
+            }
+        }
+    }, 3000);
     if (window.location.hostname !== 'www.kuru.io') {
             return;
         }
