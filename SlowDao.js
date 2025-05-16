@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.53
+// @version      1.54
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -16,6 +16,9 @@
 // @grant        GM_getValue
 // @run-at       document-start
 // @license      MIT
+// @updateURL    https://raw.githubusercontent.com/shhysy/SlowDao/main/SlowDao.js
+// @downloadURL  https://raw.githubusercontent.com/shhysy/SlowDao/main/SlowDao.js
+// @supportURL   https://github.com/shhysy/SlowDao/issues
 // ==/UserScript==
 
 (function() {
@@ -2080,7 +2083,7 @@
     const GoBackButton = setInterval(() => {
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
-            if (button.textContent.includes('Go back') && button.textContent.includes('Retry the swap')) {
+            if (button.textContent.includes('Go back') || button.textContent.includes('Retry the swap')) {
                 const nextSiteBtnA = setInterval(() => {
                     //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
                     const nextSiteBtn = document.querySelector('#nextSiteBtn');
