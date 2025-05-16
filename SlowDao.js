@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.40
+// @version      1.41
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -1684,12 +1684,12 @@
         });
     }, 3000);
 
-    const ConfirmButton = setInterval(() => {
+    const ConfirmButton1 = setInterval(() => {
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
             if (button.textContent.trim().includes('Submit Swap')) {
                 button.click(); 
-                clearInterval(ConfirmButton);
+                clearInterval(ConfirmButton1);
             }
         });
     }, 30000);
@@ -1701,17 +1701,97 @@
             if (button.textContent.trim().includes('Transaction Confirmed')) {
                 console.log('交易已确认');
                 //跳转至360浏览器
-                window.location.href = 'https://www.360.cn/';
+                window.location.href = 'https://shmonad.xyz/';
                 clearInterval(TransactionConfirmed);
+            }
+        });
+    }, 3000);
+})();
+
+//monad hmonad.xyz
+(function() {
+    if (window.location.hostname !== 'shmonad.xyz') {
+        return;
+    }
+
+    const ConnectWallet = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.includes('Connect wallet') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(ConnectWallet);
+            }
+        });
+    }, 3000);
+
+    //选择小狐狸
+    const SelectMetaMask = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.includes('MetaMask') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(SelectMetaMask);
             }
         });
     }, 3000);
 
 
+    //<span class="ml-2 flex-grow">Successfully staked 0.0007 ShMONAD</span>
+    const SuccessfullyStaked = setInterval(() => {
+        const buttons = document.querySelectorAll('span');
+        buttons.forEach(button => {
+            if (button.textContent.includes('Successfully staked')) {
+                //跳转360
+                window.location.href = 'https://www.360.cn/';
+            }
+        });
+    }, 1000);
 
+    
+    const inputInterval2 = setInterval(() => {
+        // 选中目标输入框（可根据 class 或 placeholder 选）
+        const input = document.querySelector('input.bg-neutral[placeholder="0"]');
+        if (input) {
+            if (!input.value || parseFloat(input.value) === 0) {
+                const min = 0.001, max = 0.003;
+                const randomValue = (Math.random() * (max - min) + min).toFixed(3);
+    
+                // 触发原生 input 的 setter
+                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+                nativeInputValueSetter.call(input, randomValue);
+    
+                // 依次触发事件
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: '0' }));
+                input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: '0' }));
+    
+                console.log('已向新输入框输入:', randomValue);
+                clearInterval(inputInterval2);
+            }
+        }
+    }, 3000);
 
-
+    //点击<button class="btn"><div class="transition-all duration-150 flex items-center animate-textFade">Stake</div></button>
+    const StakeButton = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.includes('Stake')) {
+                button.click();
+                clearInterval(StakeButton); 
+            }
+        });
+    }, 3000);
+    
+    
 })();
+
+
+
+
+
 
 
 
