@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.48
+// @version      1.49
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -16,7 +16,6 @@
 // @grant        GM_getValue
 // @run-at       document-start
 // @license      MIT
-
 // ==/UserScript==
 
 (function() {
@@ -1990,9 +1989,12 @@
 
     //点击/html/body/div/div[1]/main/main/div/div[4]/div[2]/div/button并且判断文本 Stake
     const StakeButton = setInterval(() => {
-        const button = document.querySelector('button');
+        const xpath = '/html/body/div/div[1]/main/main/div/div[4]/div[2]/div/button';
+        const result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+        const button = result.singleNodeValue;
         if (button && button.textContent.includes('Stake')) {
             button.click();
+            console.log('已点击Stake按钮');
             clearInterval(StakeButton);
         }
     }, 3000);
