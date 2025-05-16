@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.38
+// @version      1.39
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -1187,15 +1187,14 @@
         return;
     }
 
-    const ConnectWallet =setInterval(() => {
+    const ConnectWalletwithwallet =setInterval(() => {
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
-            // 检查按钮是否包含 "Continue with Google" 文本并且没有 disabled 属性
             if (button.textContent.includes('Continue with a wallet') &&
                 !button.hasAttribute('disabled')) {
                 console.log('找到可点击的按钮，正在点击...');
                 button.click();
-                clearInterval(ConnectWallet)
+                clearInterval(ConnectWalletwithwallet)
             } else if (button.hasAttribute('disabled')) {
                 console.log('按钮不可点击，跳过');
             }
@@ -1215,6 +1214,20 @@
             }
         });
     }, 3000);
+
+    //连接钱包
+    const ConnectWallet = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.includes('Connect Wallet') &&
+                !button.hasAttribute('disabled')) { 
+                button.click();
+                clearInterval(ConnectWallet);
+            }
+        });
+    }, 3000);
+    
+
 
 
     // 目标路径
