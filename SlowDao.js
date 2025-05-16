@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.52
+// @version      1.53
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -719,92 +719,104 @@
 })();
 
 (function() {
-    const observer = new MutationObserver(() => {
-        if (window.location.href.includes("x.com") || window.location.href.includes("twitter.com") || window.location.href.includes("discord.com") || window.location.href.includes("https://api.x.com/oauth/authorize")) {
-            const allElements = Array.from(document.querySelectorAll('*'));
-            allElements.forEach(el => {
-                const buttonText = el.innerHTML.trim();
-                if (['Authorize app'].includes(buttonText) && el.tagName === 'BUTTON') {
-                    setTimeout(() => {
-                        el.click();
-                    }, 2000);
+    // 等待 body 元素可用
+    function setupObserver() {
+        const observer = new MutationObserver(() => {
+            if (window.location.href.includes("x.com") || window.location.href.includes("twitter.com") || window.location.href.includes("discord.com") || window.location.href.includes("https://api.x.com/oauth/authorize")) {
+                const allElements = Array.from(document.querySelectorAll('*'));
+                allElements.forEach(el => {
+                    const buttonText = el.innerHTML.trim();
+                    if (['Authorize app'].includes(buttonText) && el.tagName === 'BUTTON') {
+                        setTimeout(() => {
+                            el.click();
+                        }, 2000);
+                    }
+                });
+                const currentUrl = new URL(window.location.href);
+                const currentPath = currentUrl.pathname;
+                let xComIndex = "";
+                if(currentUrl.href.indexOf("x.com")){
+                    xComIndex=currentUrl.href.indexOf("x.com")
                 }
-            });
-            const currentUrl = new URL(window.location.href);
-            const currentPath = currentUrl.pathname;
-            let xComIndex = "";
-            if(currentUrl.href.indexOf("x.com")){
-                xComIndex=currentUrl.href.indexOf("x.com")
-            }
-            if(currentUrl.href.indexOf("api.x.com")){
-                xComIndex=currentUrl.href.indexOf("api.x.com")
-            }
-            if(currentUrl.href.indexOf("discord.com")){
-                xComIndex=currentUrl.href.indexOf("discord.com")
-            }
-            const hasTwoSegments = xComIndex !== -1 && (currentUrl.href.slice(xComIndex + 5).split('/').length - 1) >= 2 || currentUrl.href.includes('?') || currentUrl.href.includes('&');
-            if(window.location.href.includes("x.com")){
-                const popup = document.querySelector('div[data-testid="confirmationSheetDialog"]');
-                if (popup) {
-                    try {
-                        const repostButton = Array.from(popup.querySelectorAll('*')).find(el => el.innerHTML.trim().includes('Repost') || el.innerHTML.trim().includes('Post'));
-                        if (repostButton) {
+                if(currentUrl.href.indexOf("api.x.com")){
+                    xComIndex=currentUrl.href.indexOf("api.x.com")
+                }
+                if(currentUrl.href.indexOf("discord.com")){
+                    xComIndex=currentUrl.href.indexOf("discord.com")
+                }
+                const hasTwoSegments = xComIndex !== -1 && (currentUrl.href.slice(xComIndex + 5).split('/').length - 1) >= 2 || currentUrl.href.includes('?') || currentUrl.href.includes('&');
+                if(window.location.href.includes("x.com")){
+                    const popup = document.querySelector('div[data-testid="confirmationSheetDialog"]');
+                    if (popup) {
+                        try {
+                            const repostButton = Array.from(popup.querySelectorAll('*')).find(el => el.innerHTML.trim().includes('Repost') || el.innerHTML.trim().includes('Post'));
+                            if (repostButton) {
+                                setTimeout(() => {
+                                    repostButton.click();
+                                    setTimeout(() => {window.close();}, 6000);
+                                }, 2000);
+                            }
+                        } catch (error) {
+                            console.error("点击弹窗按钮时出错:", error);
+                        }
+                    }
+
+                    const authorizeSpan = allElements.find(span => span.innerHTML.trim() === 'Authorize app' && span.tagName === 'SPAN');
+                    if (authorizeSpan) {
+                        const button = authorizeSpan.closest('button');
+                        if (button) {
                             setTimeout(() => {
-                                repostButton.click();
+                                button.click();
+                                observer.disconnect();
                                 setTimeout(() => {window.close();}, 6000);
                             }, 2000);
                         }
-                    } catch (error) {
-                        console.error("点击弹窗按钮时出错:", error);
                     }
-                }
-
-
-                const authorizeSpan = allElements.find(span => span.innerHTML.trim() === 'Authorize app' && span.tagName === 'SPAN');
-                if (authorizeSpan) {
-                    const button = authorizeSpan.closest('button');
-                    if (button) {
+                    const followButton = allElements.find(el =>['Follow', 'Authorize app', 'Repost', 'Post', 'Like'].some(text => el.innerHTML.trim().includes(text)) && el.tagName === 'BUTTON');
+                    if (followButton) {
                         setTimeout(() => {
-                            button.click();
+                            followButton.click();
+                            observer.disconnect();
+                            setTimeout(() => {window.close();}, 6000);
+                        }, 2000);
+                    }
+
+                    const followInput = allElements.find(input =>input.tagName === 'INPUT' && input.type === 'submit' && ['Follow', 'Authorize app', 'Repost', 'Post', 'Like'].includes(input.value.trim()));
+                    if (followButton) {
+                        setTimeout(() => {
+                            followButton.click();
+                            observer.disconnect();
+                            setTimeout(() => {window.close();}, 6000);
+                        }, 2000);
+                    }
+
+                    const specificInput = allElements.find(input => input.tagName === 'INPUT' && input.type === 'submit' && input.value === "Authorize app");
+                    if (specificInput) {
+                        setTimeout(() => {
+                            specificInput.click();
                             observer.disconnect();
                             setTimeout(() => {window.close();}, 6000);
                         }, 2000);
                     }
                 }
-                const followButton = allElements.find(el =>['Follow', 'Authorize app', 'Repost', 'Post', 'Like'].some(text => el.innerHTML.trim().includes(text)) && el.tagName === 'BUTTON');
-                if (followButton) {
-                    setTimeout(() => {
-                        followButton.click();
-                        observer.disconnect();
-                        setTimeout(() => {window.close();}, 6000);
-                    }, 2000);
-
-                }
-                const followInput = allElements.find(input =>input.tagName === 'INPUT' && input.type === 'submit' && ['Follow', 'Authorize app', 'Repost', 'Post', 'Like'].includes(input.value.trim()));
-                if (followButton) {
-                    setTimeout(() => {
-                        followButton.click();
-                        observer.disconnect();
-                        setTimeout(() => {window.close();}, 6000);
-                    }, 2000);
-                }
-
-                const specificInput = allElements.find(input => input.tagName === 'INPUT' && input.type === 'submit' && input.value === "Authorize app");
-                if (specificInput) {
-                    setTimeout(() => {
-                        specificInput.click();
-                        observer.disconnect();
-                        setTimeout(() => {window.close();}, 6000);
-                    }, 2000);
-                }
             }
+        });
+
+        if (document.body) {
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
         }
-    });
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-    // Your code here...
+    }
+
+    // 如果 body 已存在则立即设置
+    if (document.body) {
+        setupObserver();
+    } else {
+        // 如果 body 还不存在则等待 DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', setupObserver);
+    }
 })();
 
 (function() {
@@ -1113,10 +1125,7 @@
     }
 })();
 
-//stake.apr.io
-//app.crystal.exchange
-//https://monad-test.kinza.finance/#/details/MON
-//MONAD STAK
+
 (function() {
 
     'use strict';
@@ -1361,7 +1370,6 @@
 })();
 //MONAD crystal
 (function() {
-
     if (window.location.hostname !== 'app.crystal.exchange') {
         return;
     }
@@ -1406,16 +1414,15 @@
         });
     }, 3000);
 
-    // 目标路径
-    const targetUrl = "https://app.crystal.exchange";
+        // 目标路径
+        const targetUrl = "https://app.crystal.exchange";
     if (window.location.href.includes(targetUrl)) {
-    // 状态标志，防止重复点击
-    let connectButtonClicked = false;
-    let metaMaskButtonClicked = false;
+        // 状态标志，防止重复点击
+        let connectButtonClicked = false;
+        let metaMaskButtonClicked = false;
 
-    // 检查当前路径并执行点击操作
-    function checkPathAndClick() {
-
+        // 检查当前路径并执行点击操作
+        function checkPathAndClick() {
             console.log("路径匹配，开始执行按钮点击操作");
 
             // 检查第一个按钮（Connect Wallet）
@@ -1439,113 +1446,111 @@
                         metaMaskButton = button;
                     }
                 });
-
                 if (metaMaskButton) {
                     metaMaskButton.click();
                     metaMaskButtonClicked = true;
                     console.log("已点击 'MetaMask' 按钮");
                 }
             }
-
-    }
-
-    // 使用定时器定期检查
-    const checkInterval = setInterval(() => {
-        checkPathAndClick();
-
-        // 如果两个按钮都已点击，停止定时器
-        if (connectButtonClicked && metaMaskButtonClicked) {
-            clearInterval(checkInterval);
-            console.log("所有按钮已点击，脚本停止运行");
         }
-    }, 1000); // 每秒检查一次
-    setInterval(() => {
-        const button = document.querySelector('.swap-button')
-        if (button.textContent.trim() === 'Swap') {
-            // 检查按钮是否可点击（未被禁用）
-            if (!button.disabled) {
-                // 模拟点击按钮
-                button.click();
-                console.log('已点击 "Swap" 按钮');
-            } else {
-                console.log('按钮处于禁用状态，无法点击');
-            }
-        }
-    }, 30000);
-    var falg =true
-    setInterval(() => {
-        var usdc = document.querySelector("#root > div > div.app-container > div.trade-container > div > div.right-column > div > div.swapmodal > div.inputbg > div.inputbutton1container > button > span")
-        if(usdc && usdc.innerHTML=='USDC'){
-            var usdcbtn = document.querySelector("#root > div > div.app-container > div.trade-container > div > div.right-column > div > div.swapmodal > div.inputbg > div.inputbutton1container > button")
-            if(usdcbtn){
-                usdcbtn.click();
-            }
-        }
-        const buttons = document.querySelectorAll('.tokenbutton');
-        buttons.forEach(button => {
-            const tokenName = button.querySelector('.tokenlistname').textContent;
-            if (tokenName === 'MON') {
-                // 模拟点击事件
-                button.click();
-                console.log('已点击MON按钮');
-            }
-        });
-        // 获取输入框元素
-        const input = document.querySelector('.input');
 
-        // 检查输入框是否为空
-        if (!input.value) {
-            // 生成 0.0001 到 0.0005 之间的随机数
-            const min = 0.0001;
-            const max = 0.0005;
-            const randomNumber = (Math.random() * (max - min) + min).toFixed(4); // 保留4位小数
-            // 确保输入框获得焦点
-            input.focus();
-            // 使用 document.execCommand 插入随机数
-            document.execCommand('insertText', false, randomNumber);
-            console.log(`已向输入框插入随机数字: ${randomNumber}`);
-        } else {
-            console.log('输入框不为空，无需插入');
+        // 使用定时器定期检查
+        const checkInterval = setInterval(() => {
+            checkPathAndClick();
+
+            // 如果两个按钮都已点击，停止定时器
+            if (connectButtonClicked && metaMaskButtonClicked) {
+                clearInterval(checkInterval);
+                console.log("所有按钮已点击，脚本停止运行");
+            }
+        }, 1000); // 每秒检查一次
+        setInterval(() => {
             const button = document.querySelector('.swap-button')
-            if (button.textContent.trim() === 'Swap' && falg) {
+            if (button.textContent.trim() === 'Swap') {
                 // 检查按钮是否可点击（未被禁用）
                 if (!button.disabled) {
                     // 模拟点击按钮
                     button.click();
-                    falg=false
                     console.log('已点击 "Swap" 按钮');
                 } else {
                     console.log('按钮处于禁用状态，无法点击');
                 }
             }
-            const link = document.querySelector('.view-transaction');
-            if(link){
-                const nextSiteBtnA = setInterval(() => {
-                    //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
-                    const nextSiteBtn = document.querySelector('#nextSiteBtn');
-                    if (nextSiteBtn) {
-                        nextSiteBtn.click();
-                        clearInterval(nextSiteBtnA);
-                    }
-                }, 40000);
+        }, 30000);
+        var falg =true
+        setInterval(() => {
+            var usdc = document.querySelector("#root > div > div.app-container > div.trade-container > div > div.right-column > div > div.swapmodal > div.inputbg > div.inputbutton1container > button > span")
+            if(usdc && usdc.innerHTML=='USDC'){
+                var usdcbtn = document.querySelector("#root > div > div.app-container > div.trade-container > div > div.right-column > div > div.swapmodal > div.inputbg > div.inputbutton1container > button")
+                if(usdcbtn){
+                    usdcbtn.click();
+                }
             }
-        }
-    }, 1000);
+            const buttons = document.querySelectorAll('.tokenbutton');
+            buttons.forEach(button => {
+                const tokenName = button.querySelector('.tokenlistname').textContent;
+                if (tokenName === 'MON') {
+                    // 模拟点击事件
+                    button.click();
+                    console.log('已点击MON按钮');
+                }
+            });
+            // 获取输入框元素
+            const input = document.querySelector('.input');
+
+            // 检查输入框是否为空
+            if (!input.value) {
+                // 生成 0.0001 到 0.0005 之间的随机数
+                const min = 0.0001;
+                const max = 0.0005;
+                const randomNumber = (Math.random() * (max - min) + min).toFixed(4); // 保留4位小数
+                // 确保输入框获得焦点
+                input.focus();
+                // 使用 document.execCommand 插入随机数
+                document.execCommand('insertText', false, randomNumber);
+                console.log(`已向输入框插入随机数字: ${randomNumber}`);
+            } else {
+                console.log('输入框不为空，无需插入');
+                const button = document.querySelector('.swap-button')
+                if (button.textContent.trim() === 'Swap' && falg) {
+                    // 检查按钮是否可点击（未被禁用）
+                    if (!button.disabled) {
+                        // 模拟点击按钮
+                        button.click();
+                        falg=false
+                        console.log('已点击 "Swap" 按钮');
+                    } else {
+                        console.log('按钮处于禁用状态，无法点击');
+                    }
+                }
+                const link = document.querySelector('.view-transaction');
+                if(link){
+                    const nextSiteBtnA = setInterval(() => {
+                        //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
+                        const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                        if (nextSiteBtn) {
+                            nextSiteBtn.click();
+                            clearInterval(nextSiteBtnA);
+                        }
+                    }, 40000);
+                }
+            }
+        }, 1000);
 
 
-    // 页面加载完成后首次运行
-    window.addEventListener('load', () => {
-        console.log("页面加载完成，开始检查路径和按钮");
-        checkPathAndClick();
-    });
-
-    // 监听 DOM 变化，但避免重复点击
-    const observer = new MutationObserver(() => {
-        if (!connectButtonClicked || !metaMaskButtonClicked) {
+        // 页面加载完成后首次运行
+        window.addEventListener('load', () => {
+            console.log("页面加载完成，开始检查路径和按钮");
             checkPathAndClick();
-        }
-    });
-    observer.observe(document.body, { childList: true, subtree: true })};
+        });
+
+        const observer = new MutationObserver(() => {
+            if (!connectButtonClicked || !metaMaskButtonClicked) {
+                checkPathAndClick();
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
 })();
 //MONAD SUPER
 (function() {
@@ -2004,8 +2009,8 @@
 (function() {
     setInterval(() => {
         if (window.location.hostname !== 'www.kuru.io' || window.location.hostname !== 'shmonad.xyz' || window.location.hostname == 'stake.apr.io' || window.location.hostname == 'app.crystal.exchange' || window.location.hostname == 'monad-test.kinza.finance' || window.location.hostname == 'monad.ambient.finance'){
-            if (document.body.style.zoom != '33%'){
-                document.body.style.zoom = '33%'
+            if (document.body.style.zoom != '50%'){
+                document.body.style.zoom = '50%'
             }
         }
     }, 3000);
