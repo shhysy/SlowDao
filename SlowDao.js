@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.71
+// @version      1.72
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -29,8 +29,8 @@
     //使用定时器
     const timer = setInterval(() => {
         const currentUrl = window.location.href;
-        // 如果当前在360网站，清除进度条
-        if (currentUrl.includes('360.com') || currentUrl.includes('www.360.com') || currentUrl.includes('monad.talentum.id')) {
+        // 如果当前https://faucet.xion.burnt.com/网站，清除进度条
+        if (currentUrl.includes('faucet.xion.burnt.com') || currentUrl.includes('monad.talentum.id')) {
             visitedSites = {};
             GM_setValue('visitedSites', visitedSites);
             GM_setValue('isCompleted', false);
@@ -152,12 +152,12 @@
         document.getElementById('progressInfo').textContent =
             `进度: ${visitedCount}/${totalSites} (${percent}%)`;
 
-        // 如果进度为100%，直接跳转到360
+        // 如果进度为100%，直接跳转到faucet.xion.burnt.com
         if (percent === 100 && falg && !isCompleted) {
-            console.log('进度达到100%，准备跳转到360');
+            console.log('进度达到100%https://faucet.xion.burnt.com/');
             // 直接跳转，不重置进度
             GM_setValue('isCompleted', true);
-            window.location.replace('https://www.360.com');
+            window.location.replace('https://faucet.xion.burnt.com/');
             falg = false;
         }
     }
@@ -176,9 +176,9 @@
 
         // 如果所有网站都已访问过，直接跳转到360
         if (unvisitedSites.length === 0) {
-            console.log('所有网站已访问完成，准备跳转到360');
+            console.log('所有网站已访问完成，准备跳转到https://faucet.xion.burnt.com/');
             GM_setValue('isCompleted', true);
-            window.location.replace('https://www.360.com');
+            window.location.replace('https://faucet.xion.burnt.com/');
             return;
         }
 
@@ -233,9 +233,6 @@
         }
     }, 60000);
 
-    // setTimeout(() => {
-    //     window.location.href = 'https://www.360.com';
-    // }, 2000000);
 
     // 配置参数
     const config = {
@@ -1970,7 +1967,7 @@
         const buttons = document.querySelectorAll('span');
         buttons.forEach(button => {
             if (button.textContent.includes('Successfully staked')) {
-                //跳转360
+                //跳转https://faucet.xion.burnt.com/
                 const nextSiteBtnA = setInterval(() => {
                     //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
                     const nextSiteBtn = document.querySelector('#nextSiteBtn');
@@ -2040,6 +2037,8 @@
             if (document.body.style.zoom != '50%'){
                 document.body.style.zoom = '50%'
             }
+
+
         }
     }, 3000);
     if (window.location.hostname !== 'www.kuru.io') {
