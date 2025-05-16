@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.59
+// @version      1.60
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -2005,6 +2005,15 @@
             clearInterval(StakeButton);
         }
     }, 3000);
+
+    setInterval(() => {
+        const xpath = '/html/body/div/div[1]/main/main/div/div[4]/div[2]/div/button';
+        const result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+        const button = result.singleNodeValue;
+        if (button && button.textContent.includes('Stake')) {
+            button.click();
+        }
+    }, 30000);
 
 })();
 //MONAD https://www.kuru.io/swap        待完善
