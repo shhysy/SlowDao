@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.47
+// @version      1.48
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -14,9 +14,9 @@
 // @grant        GM_download
 // @grant        GM_setValue
 // @grant        GM_getValue
-// @run-at       document-end
-// @license      MIT
 // @run-at       document-start
+// @license      MIT
+
 // ==/UserScript==
 
 (function() {
@@ -27,6 +27,17 @@
     if (currentUrl.includes('hcaptcha.com') || currentUrl.includes('cloudflare.com')) {
         return; // 不执行脚本
     }
+
+    //使用定时器
+    const timer = setInterval(() => {
+        // 如果当前在360网站，清除进度条
+        if (currentUrl.includes('360.com')) {
+            visitedSites = {};
+            GM_setValue('visitedSites', visitedSites);
+            return; // 清除后不执行后续代码
+        }
+    }, 100);
+
 
     // 自定义跳转列表（在此处添加你的目标网址）
     const customSiteSequence = [
@@ -126,11 +137,12 @@
         const percent = Math.round((visitedCount / totalSites) * 100);
         document.getElementById('progressInfo').textContent =
             `进度: ${visitedCount}/${totalSites} (${percent}%)`;
-        // 如果进度为100%，重置进度并跳转到360
+        
+        // 如果进度为100%，直接跳转到360
         if (percent === 100) {
-            visitedSites = {};
-            GM_setValue('visitedSites', visitedSites);
-            window.location.href = 'https://www.360.com';
+            console.log('进度达到100%，准备跳转到360');
+            // 直接跳转，不重置进度
+            window.location.replace('https://www.360.com');
         }
     }
 
@@ -145,11 +157,6 @@
     document.getElementById('nextSiteBtn').addEventListener('click', function() {
         // 获取未访问过的网站列表
         const unvisitedSites = customSiteSequence.filter(site => !visitedSites[site]);
-
-        // 添加调试信息
-        console.log('已访问的网站:', visitedSites);
-        console.log('未访问的网站数量:', unvisitedSites.length);
-        console.log('未访问的网站列表:', unvisitedSites);
 
         // 如果所有网站都已访问过，显示提示并返回
         if (unvisitedSites.length === 0) {
