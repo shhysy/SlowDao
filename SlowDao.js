@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.67
+// @version      1.68
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -24,22 +24,34 @@
 (function() {
     'use strict';
     var falg = true
+    var isCompleted = GM_getValue('isCompleted', false);
+    
     //使用定时器
     const timer = setInterval(() => {
+        const currentUrl = window.location.href;
         // 如果当前在360网站，清除进度条
-        if (currentUrl.includes('360.com') || currentUrl.includes('www.360.com')) {
+        if (currentUrl.includes('360.com') || currentUrl.includes('www.360.com') || currentUrl.includes('monad.talentum.id')) {
             visitedSites = {};
             GM_setValue('visitedSites', visitedSites);
-            return; // 清除后不执行后续代码
+            GM_setValue('isCompleted', false);
+            clearInterval(timer);
+            // 移除控制面板
+            const panel = document.getElementById('manualJumpPanel');
+            if (panel) {
+                panel.remove();
+            }
+            return;
         }
     }, 100);
 
-        
     // 检查当前URL是否在排除列表中
     const currentUrl = window.location.href;
     if (currentUrl.includes('hcaptcha.com') || currentUrl.includes('cloudflare.com')) {
         return; // 不执行脚本
     }
+
+
+
 
     // 自定义跳转列表（在此处添加你的目标网址）
     const customSiteSequence = [
@@ -139,13 +151,14 @@
         const percent = Math.round((visitedCount / totalSites) * 100);
         document.getElementById('progressInfo').textContent =
             `进度: ${visitedCount}/${totalSites} (${percent}%)`;
-        
+
         // 如果进度为100%，直接跳转到360
-        if (percent === 100 && falg·) {
+        if (percent === 100 && falg && !isCompleted) {
             console.log('进度达到100%，准备跳转到360');
             // 直接跳转，不重置进度
+            GM_setValue('isCompleted', true);
             window.location.replace('https://www.360.com');
-            falg = false
+            falg = false;
         }
     }
 
@@ -161,9 +174,11 @@
         // 获取未访问过的网站列表
         const unvisitedSites = customSiteSequence.filter(site => !visitedSites[site]);
 
-        // 如果所有网站都已访问过，显示提示并返回
+        // 如果所有网站都已访问过，直接跳转到360
         if (unvisitedSites.length === 0) {
-            // 重置访问记录
+            console.log('所有网站已访问完成，准备跳转到360');
+            GM_setValue('isCompleted', true);
+            window.location.replace('https://www.360.com');
             return;
         }
 
@@ -1127,6 +1142,7 @@
 })();
 
 
+
 (function() {
 
     'use strict';
@@ -1770,7 +1786,6 @@
     if (window.location.hostname !== 'monad.ambient.finance') {
         return;
     }
-
     const ConnectWallet = setInterval(() => {
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
@@ -2006,28 +2021,27 @@
         }
     }, 3000);
 
-    setInterval(() => {
+    const StakeButton1 = setInterval(() => {
         const xpath = '/html/body/div/div[1]/main/main/div/div[4]/div[2]/div/button';
         const result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
         const button = result.singleNodeValue;
         if (button && button.textContent.includes('Stake')) {
             button.click();
+            console.log('已点击Stake按钮');
+            //clearInterval(StakeButton);
         }
-    }, 30000);
+    }, 3000);
 
 })();
-
 //MONAD https://www.kuru.io/swap        待完善
 (function() {
     setInterval(() => {
-
         if (window.location.hostname !== 'www.kuru.io' || window.location.hostname !== 'shmonad.xyz' || window.location.hostname == 'stake.apr.io' || window.location.hostname == 'app.crystal.exchange' || window.location.hostname == 'monad-test.kinza.finance' || window.location.hostname == 'monad.ambient.finance'){
             if (document.body.style.zoom != '50%'){
                 document.body.style.zoom = '50%'
             }
         }
     }, 3000);
-
     if (window.location.hostname !== 'www.kuru.io') {
             return;
     }
@@ -2107,3 +2121,4 @@
         });
     }, 3000);
 })();
+
