@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.58
+// @version      1.59
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -165,7 +165,6 @@
             // 重置访问记录
             visitedSites = {};
             GM_setValue('visitedSites', visitedSites);
-            alert('已重置访问记录，可以重新开始访问！');
             return;
         }
 
