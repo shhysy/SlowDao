@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.55
+// @version      1.56
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
