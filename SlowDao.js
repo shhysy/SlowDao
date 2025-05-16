@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.57
+// @version      1.58
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -33,7 +33,7 @@
     //使用定时器
     const timer = setInterval(() => {
         // 如果当前在360网站，清除进度条
-        if (currentUrl.includes('360.com')) {
+        if (currentUrl.includes('360.com') || currentUrl.includes('www.360.com')) {
             visitedSites = {};
             GM_setValue('visitedSites', visitedSites);
             return; // 清除后不执行后续代码
