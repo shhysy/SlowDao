@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.60
+// @version      1.61
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -24,12 +24,6 @@
 (function() {
     'use strict';
 
-    // 检查当前URL是否在排除列表中
-    const currentUrl = window.location.href;
-    if (currentUrl.includes('hcaptcha.com') || currentUrl.includes('cloudflare.com')) {
-        return; // 不执行脚本
-    }
-
     //使用定时器
     const timer = setInterval(() => {
         // 如果当前在360网站，清除进度条
@@ -40,6 +34,12 @@
         }
     }, 100);
 
+        
+    // 检查当前URL是否在排除列表中
+    const currentUrl = window.location.href;
+    if (currentUrl.includes('hcaptcha.com') || currentUrl.includes('cloudflare.com')) {
+        return; // 不执行脚本
+    }
 
     // 自定义跳转列表（在此处添加你的目标网址）
     const customSiteSequence = [
@@ -2016,6 +2016,7 @@
     }, 30000);
 
 })();
+
 //MONAD https://www.kuru.io/swap        待完善
 (function() {
     setInterval(() => {
