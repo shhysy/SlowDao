@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.63
+// @version      1.64
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -1769,6 +1769,13 @@
     if (window.location.hostname !== 'monad.ambient.finance') {
         return;
     }
+    //定时器
+    const timer = setInterval(() => {
+        if (document.body.style.zoom != '50%'){
+            document.body.style.zoom = '50%'
+        }
+    }, 1000);
+
     const ConnectWallet = setInterval(() => {
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
@@ -2018,12 +2025,14 @@
 //MONAD https://www.kuru.io/swap        待完善
 (function() {
     setInterval(() => {
+
         if (window.location.hostname !== 'www.kuru.io' || window.location.hostname !== 'shmonad.xyz' || window.location.hostname == 'stake.apr.io' || window.location.hostname == 'app.crystal.exchange' || window.location.hostname == 'monad-test.kinza.finance' || window.location.hostname == 'monad.ambient.finance'){
             if (document.body.style.zoom != '50%'){
                 document.body.style.zoom = '50%'
             }
         }
     }, 3000);
+
     if (window.location.hostname !== 'www.kuru.io') {
             return;
     }
