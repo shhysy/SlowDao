@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.66
+// @version      1.67
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -1770,12 +1770,6 @@
     if (window.location.hostname !== 'monad.ambient.finance') {
         return;
     }
-    //定时器
-    const timer = setInterval(() => {
-        if (document.body.style.zoom != '50%'){
-            document.body.style.zoom = '50%'
-        }
-    }, 1000);
 
     const ConnectWallet = setInterval(() => {
         const buttons = document.querySelectorAll('button');
