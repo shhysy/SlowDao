@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.51
+// @version      1.52
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -1545,8 +1545,7 @@
             checkPathAndClick();
         }
     });
-    observer.observe(document.body, { childList: true, subtree: true });
-         }
+    observer.observe(document.body, { childList: true, subtree: true })};
 })();
 //MONAD SUPER
 (function() {
@@ -2012,7 +2011,7 @@
     }, 3000);
     if (window.location.hostname !== 'www.kuru.io') {
             return;
-        }
+    }
 
     const ConnectWallet = setInterval(() => {
         const buttons = document.querySelectorAll('button');
@@ -2076,7 +2075,7 @@
     const GoBackButton = setInterval(() => {
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
-            if (button.textContent.includes('Go back')) {
+            if (button.textContent.includes('Go back') && button.textContent.includes('Retry the swap')) {
                 const nextSiteBtnA = setInterval(() => {
                     //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
                     const nextSiteBtn = document.querySelector('#nextSiteBtn');
