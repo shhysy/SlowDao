@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.69
+// @version      1.70
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -2069,6 +2069,8 @@
         });
     }, 3000);
 
+
+
     const inputInterval3 = setInterval(() => {
         // 选中目标输入框（根据 placeholder 或 class 选）
         const input = document.querySelector('input[placeholder="0.00"].flex.w-full.rounded-md');
@@ -2098,6 +2100,16 @@
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
             if (button.textContent.includes('Swap')) {
+                button.click();
+                clearInterval(SwapButton);
+            }
+        });
+    }, 3000);
+
+    setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.includes('Retry the swap')) {
                 button.click();
                 clearInterval(SwapButton);
             }
