@@ -1,21 +1,20 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.44
+// @version      1.45
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
-// @grant        none
-// @updateURL    https://raw.githubusercontent.com/shhysy/SlowDao/main/SlowDao.js
-// @downloadURL  https://raw.githubusercontent.com/shhysy/SlowDao/main/SlowDao.js
-// @supportURL   https://github.com/shhysy/SlowDao/issues
 // @exclude      https://www.hcaptcha.com/*
 // @exclude      https://hcaptcha.com/*
 // @exclude      https://www.cloudflare.com/*
 // @exclude      https://cloudflare.com/*
 // @grant        GM_addStyle
+// @grant        GM_xmlhttpRequest
+// @grant        GM_download
 // @grant        GM_setValue
 // @grant        GM_getValue
+// @run-at       document-end
 // @license      MIT
 // @run-at       document-start
 // ==/UserScript==
@@ -31,11 +30,11 @@
 
     // 自定义跳转列表（在此处添加你的目标网址）
     const customSiteSequence = [
-        "https://www.kuru.io/swap",
-        "app.crystal.exchange",
+        "https://app.crystal.exchange",
         "https://monad-test.kinza.finance/#/details/MON",
-        "monad.ambient.finance",
-        "shmonad.xyz",
+        "https://monad.ambient.finance/",
+        "https://shmonad.xyz/",
+        "https://www.kuru.io/swap",
     ];
 
     // 添加控制面板样式
@@ -114,15 +113,26 @@
     // 初始化访问记录
     let visitedSites = GM_getValue('visitedSites', {});
 
+    // 检查当前网站是否在列表中，如果是则标记为已访问
+    if (customSiteSequence.includes(currentUrl)) {
+        visitedSites[currentUrl] = true;
+        GM_setValue('visitedSites', visitedSites);
+    }
+
     // 更新进度显示
     function updateProgress() {
         const totalSites = customSiteSequence.length;
         const visitedCount = Object.keys(visitedSites).length;
         document.getElementById('progressInfo').textContent =
             `进度: ${visitedCount}/${totalSites} (${Math.round((visitedCount/totalSites)*100)}%)`;
-            if (percent >= 100) {
-                window.location.href = 'https://www.360.cn/';
-            }
+            //如果进度为100%，跳转到下一个网页
+            if (visitedCount === totalSites) {
+                //跳转盗360
+                window.location.href = 'https://www.360.com'
+                //清除访问记录
+                visitedSites = {};
+                GM_setValue('visitedSites', visitedSites);
+            } 
     }
 
     updateProgress();
@@ -132,39 +142,35 @@
         document.getElementById('errorNotice').style.display = 'block';
     });
 
-    // 跳转逻辑
+    // 跳转逻辑，改为随机跳转
     document.getElementById('nextSiteBtn').addEventListener('click', function() {
-        const currentUrl = window.location.href;
-        let nextIndex = 0;
-        let found = false;
+        // 获取未访问过的网站列表
+        const unvisitedSites = customSiteSequence.filter(site => !visitedSites[site]);
 
-        // 查找当前网址在列表中的位置
-        for (let i = 0; i < customSiteSequence.length; i++) {
-            try {
-                if (currentUrl.includes(new URL(customSiteSequence[i]).hostname)) {
-                    nextIndex = (i + 1) % customSiteSequence.length;
-                    found = true;
+        // 添加调试信息
+        console.log('已访问的网站:', visitedSites);
+        console.log('未访问的网站数量:', unvisitedSites.length);
+        console.log('未访问的网站列表:', unvisitedSites);
 
-                    // 记录已访问的网站
-                    visitedSites[currentUrl] = true;
-                    GM_setValue('visitedSites', visitedSites);
-                    break;
-                }
-            } catch(e) {
-                // URL解析错误时继续
-                continue;
-            }
-        }
-
-        // 如果当前网址不在列表中，从第一个开始
-        if (!found) {
-            visitedSites[currentUrl] = true;
+        // 如果所有网站都已访问过，显示提示并返回
+        if (unvisitedSites.length === 0) {
+            // 重置访问记录
+            visitedSites = {};
             GM_setValue('visitedSites', visitedSites);
-            nextIndex = 0;
+            alert('已重置访问记录，可以重新开始访问！');
+            return;
         }
+
+        // 从未访问过的网站中随机选择一个
+        const randomIndex = Math.floor(Math.random() * unvisitedSites.length);
+        const randomSite = unvisitedSites[randomIndex];
+
+        // 记录已访问的网站
+        visitedSites[randomSite] = true;
+        GM_setValue('visitedSites', visitedSites);
 
         updateProgress();
-        window.location.href = customSiteSequence[nextIndex];
+        window.location.href = randomSite;
     });
 
     // 关闭面板按钮 - 仅移除面板，不重置记录
@@ -179,7 +185,6 @@
 
     console.log('自定义跳转脚本已加载，控制面板将显示');
 })();
-
 
 (function() {
     var isBaidu = false;
@@ -1107,20 +1112,9 @@
     }
 })();
 
-
-
-
-
-
-
-
-
 //stake.apr.io
 //app.crystal.exchange
 //https://monad-test.kinza.finance/#/details/MON
-
-
-
 //MONAD STAK
 (function() {
     'use strict';
@@ -1135,8 +1129,16 @@
         for (const button of buttons) {
             const buttonLabel = button.querySelector('.mantine-Button-label');
             if (buttonLabel && buttonLabel.textContent === "Insufficient balance to cover gas fees") {
-                window.location.href = 'https://app.crystal.exchange/swap';
-                clearInterval(tourl);
+                //
+                const nextSiteBtnA = setInterval(() => {
+                    //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
+                    const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                    if (nextSiteBtn) {
+                        nextSiteBtn.click();
+                        clearInterval(nextSiteBtnA);
+                        clearInterval(tourl);
+                    }
+                }, 3000);
             }
         }
     }, 2000);
@@ -1159,7 +1161,7 @@
         }
         return null;
     }
-    
+
     const MetaMask = setInterval(() => {
         const btn = findButtonInShadow(document, 'MetaMask');
         if (btn) {
@@ -1171,8 +1173,6 @@
         }
     }, 2000);
 
-    // 配置目标跳转URL
-    const TARGET_URL = "https://app.crystal.exchange/swap";
 
     // 第一步：判断路径
 
@@ -1201,7 +1201,15 @@
         const notification = document.querySelector('.m_a49ed24.mantine-Notification-body');
         if (notification && notification.textContent.includes("Deposit completed")) {
             console.log("检测到存款完成通知，正在跳转...");
-            window.location.href = TARGET_URL;
+            //使用定时器
+            const nextSiteBtnA = setInterval(() => {
+                //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
+                const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                if (nextSiteBtn) {
+                    nextSiteBtn.click();
+                    clearInterval(nextSiteBtnA);
+                }
+            }, 3000);
         }
     }
 
@@ -1276,7 +1284,7 @@
                     false
                 );
                 if (inputSuccess) {
-                    console.log("输入框处理完成，等待点击 Stake 按钮"); 
+                    console.log("输入框处理完成，等待点击 Stake 按钮");
                     await waitForStakeButton(inputElement);
                 }
             } else {
@@ -1388,7 +1396,7 @@
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
             if (button.textContent.includes('Connect Wallet') &&
-                !button.hasAttribute('disabled')) { 
+                !button.hasAttribute('disabled')) {
                 button.click();
                 clearInterval(ConnectWallet);
             }
@@ -1509,8 +1517,13 @@
             }
             const link = document.querySelector('.view-transaction');
             if(link){
-                setTimeout(() => {
-                    window.location.href ='https://monad-test.kinza.finance/#/details/MON';
+                const nextSiteBtnA = setInterval(() => {
+                    //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
+                    const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                    if (nextSiteBtn) {
+                        nextSiteBtn.click();
+                        clearInterval(nextSiteBtnA);
+                    }
                 }, 40000);
             }
         }
@@ -1537,15 +1550,22 @@
     'use strict';
 
     if (window.location.href !== 'https://monad-test.kinza.finance/#/details/MON') {
-        return;
-    }
+            return;
+        }
 
     //检测<span>Supply cap is exceeded</span>如果出现跳转下一个网址
     var Supplyfalg= false;
     const SupplyCap = setInterval(() => {
         const span = document.querySelector('span');
         if (span.textContent.trim() === 'Supply cap is exceeded' && Supplyfalg == false) {
-            window.location.href = 'https://monad.ambient.finance/';
+            const nextSiteBtnA = setInterval(() => {
+                //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
+                const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                if (nextSiteBtn) {
+                    nextSiteBtn.click();
+                    clearInterval(nextSiteBtnA);
+                }
+            }, 3000);
             Supplyfalg = true;
         }
     }, 1000);
@@ -1671,7 +1691,7 @@
             }
 
             // 增加延迟，确保输入框加载
-            setTimeout(() => {
+    setTimeout(() => {
                 // 第三步：查找并检查输入框
                 waitForElement('input[type="text"]', (inputField) => {
                     if (isInputEmpty(inputField)) {
@@ -1696,8 +1716,14 @@
                                     waitForElement('div._SuccessTitle_1542z_137', (successElement) => {
                                         if (successElement.textContent.trim() === 'All Done!') {
                                             console.log('Operation completed successfully: All Done!');
-                                            // 跳转到下一个 URL（请替换为实际目标 URL）
-                                            window.location.href = 'https://monad.ambient.finance/';
+                                            const nextSiteBtnA = setInterval(() => {
+                                                //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
+                                                const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                                                if (nextSiteBtn) {
+                                                    nextSiteBtn.click();
+                                                    clearInterval(nextSiteBtnA);
+                                                }
+                                            }, 3000);
                                         } else {
                                             console.log('Did not find "All Done!". Retrying...');
                                             waitForElement('div._SuccessTitle_1542z_137', arguments.callee, Infinity, 5000);
@@ -1754,13 +1780,13 @@
             }
         });
     }, 3000);
-    
+
 
     const MetaMask = setInterval(() => {
         function clickMetaMaskInAllShadowRoots(root = document) {
             // 查找本层的所有按钮
             const buttons = root.querySelectorAll ? root.querySelectorAll('button') : [];
-            for (const button of buttons) {
+        for (const button of buttons) {
                 if (
                     button.textContent.includes('MetaMask') &&
                     !button.hasAttribute('disabled')
@@ -1784,7 +1810,7 @@
             }
             return false;
         }
-    
+
         // 这里要实际调用递归函数
         if (clickMetaMaskInAllShadowRoots()) {
             clearInterval(MetaMask);
@@ -1804,24 +1830,24 @@
         }
     }, 1000);
 
-    
+
     const inputInterval = setInterval(() => {
         const input = document.querySelector('input#swap_sell_qty._tokenQuantityInput_ispvp_37');
         if (input) {
             if (!input.value || parseFloat(input.value) === 0) {
                 const min = 0.001, max = 0.003;
                 const randomValue = (Math.random() * (max - min) + min).toFixed(3);
-    
+
                 // 触发原生 input 的 setter
                 const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
                 nativeInputValueSetter.call(input, randomValue);
-    
+
                 // 依次触发事件
                 input.dispatchEvent(new Event('input', { bubbles: true }));
                 input.dispatchEvent(new Event('change', { bubbles: true }));
                 input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: '0' }));
                 input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: '0' }));
-    
+
                 console.log('已向输入框输入:', randomValue);
             }
         }
@@ -1847,7 +1873,7 @@
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
             if (button.textContent.trim().includes('Submit Swap')) {
-                button.click(); 
+                button.click();
                 clearInterval(ConfirmButton);
             }
         });
@@ -1857,7 +1883,7 @@
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
             if (button.textContent.trim().includes('Submit Swap')) {
-                button.click(); 
+                button.click();
                 clearInterval(ConfirmButton1);
             }
         });
@@ -1869,9 +1895,15 @@
         buttons.forEach(button => {
             if (button.textContent.trim().includes('Transaction Confirmed')) {
                 console.log('交易已确认');
-                //跳转至360浏览器
-                window.location.href = 'https://shmonad.xyz/';
-                clearInterval(TransactionConfirmed);
+                const nextSiteBtnA = setInterval(() => {
+                    //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
+                    const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                    if (nextSiteBtn) {
+                        nextSiteBtn.click();
+                        clearInterval(nextSiteBtnA);
+                        clearInterval(TransactionConfirmed);
+                    }
+                }, 3000);
             }
         });
     }, 3000);
@@ -1912,12 +1944,19 @@
         buttons.forEach(button => {
             if (button.textContent.includes('Successfully staked')) {
                 //跳转360
-                window.location.href = 'https://www.360.cn/';
+                const nextSiteBtnA = setInterval(() => {
+                    //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
+                    const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                    if (nextSiteBtn) {
+                        nextSiteBtn.click();
+                        clearInterval(nextSiteBtnA);
+                    }
+                }, 3000);
             }
         });
     }, 1000);
 
-    
+
     const inputInterval2 = setInterval(() => {
         // 选中目标输入框（可根据 class 或 placeholder 选）
         const input = document.querySelector('input.bg-neutral[placeholder="0"]');
@@ -1925,17 +1964,17 @@
             if (!input.value || parseFloat(input.value) === 0) {
                 const min = 0.001, max = 0.003;
                 const randomValue = (Math.random() * (max - min) + min).toFixed(3);
-    
+
                 // 触发原生 input 的 setter
                 const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
                 nativeInputValueSetter.call(input, randomValue);
-    
+
                 // 依次触发事件
                 input.dispatchEvent(new Event('input', { bubbles: true }));
                 input.dispatchEvent(new Event('change', { bubbles: true }));
                 input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: '0' }));
                 input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: '0' }));
-    
+
                 console.log('已向新输入框输入:', randomValue);
                 clearInterval(inputInterval2);
             }
@@ -1949,16 +1988,15 @@
         if (button && button.textContent.includes('Stake')) {
             button.click();
             clearInterval(StakeButton);
-        }   
+        }
     }, 3000);
 
 })();
-
 //MONAD https://www.kuru.io/swap        待完善
 (function() {
     if (window.location.hostname !== 'www.kuru.io') {
-        return;
-    }
+            return;
+        }
 
     const ConnectWallet = setInterval(() => {
         const buttons = document.querySelectorAll('button');
@@ -1990,17 +2028,17 @@
             if (!input.value || parseFloat(input.value) === 0) {
                 const min = 0.001, max = 0.003;
                 const randomValue = (Math.random() * (max - min) + min).toFixed(3);
-    
+
                 // 触发原生 input 的 setter
                 const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
                 nativeInputValueSetter.call(input, randomValue);
-    
+
                 // 依次触发事件
                 input.dispatchEvent(new Event('input', { bubbles: true }));
                 input.dispatchEvent(new Event('change', { bubbles: true }));
                 input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: '0' }));
                 input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: '0' }));
-    
+
                 console.log('已向新输入框输入:', randomValue);
                 clearInterval(inputInterval3);
             }
@@ -2018,31 +2056,20 @@
         });
     }, 3000);
 
-    //<span class="ml-2 flex-grow">Successfully staked 0.0007 ShMONAD</span>
-    const SuccessfullyStaked = setInterval(() => {
-        const buttons = document.querySelectorAll('span');  
+    //<button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-brand border-2 border-background hover:opacity-80 dark:text-background relative -translate-y-[0.075rem] -translate-x-[0.075rem] hover:translate-y-[0.075rem] hover:translate-x-[0.075rem] transition-all ease-in-out z-10 h-10 rounded-xl px-4 py-2 w-full" data-sentry-element="Button" data-sentry-source-file="SwapSuccess.tsx">Go back</button>
+    const GoBackButton = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
-            if (button.textContent.includes('Successfully staked')) {
-                //跳转360
-                window.location.href = 'https://www.360.cn/';
+            if (button.textContent.includes('Go back')) {
+                const nextSiteBtnA = setInterval(() => {
+                    //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
+                    const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                    if (nextSiteBtn) {
+                        nextSiteBtn.click();
+                        clearInterval(nextSiteBtnA);
+                    }
+                }, 3000);
             }
         });
-    }, 1000);
-
+    }, 3000);
 })();
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
