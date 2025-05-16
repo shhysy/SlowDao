@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.42
+// @version      1.43
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -1707,7 +1707,6 @@
         });
     }, 3000);
 })();
-
 //monad hmonad.xyz
 (function() {
     if (window.location.hostname !== 'shmonad.xyz') {
@@ -1784,10 +1783,91 @@
         }   
     }, 3000);
 
-
-    
-    
 })();
+
+//MONAD https://www.kuru.io/swap        待完善
+(function() {
+    if (window.location.hostname !== 'www.kuru.io') {
+        return;
+    }
+
+    const ConnectWallet = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.includes('Connect wallet') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(ConnectWallet);
+            }
+        });
+    }, 3000);
+
+    //选择小狐狸
+    const SelectMetaMask = setInterval(() => {
+        const buttons = document.querySelectorAll('div');
+        buttons.forEach(button => {
+            if (button.textContent.includes('MetaMask') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(SelectMetaMask);
+            }
+        });
+    }, 3000);
+
+    const inputInterval3 = setInterval(() => {
+        // 选中目标输入框（根据 placeholder 或 class 选）
+        const input = document.querySelector('input[placeholder="0.00"].flex.w-full.rounded-md');
+        if (input) {
+            if (!input.value || parseFloat(input.value) === 0) {
+                const min = 0.001, max = 0.003;
+                const randomValue = (Math.random() * (max - min) + min).toFixed(3);
+    
+                // 触发原生 input 的 setter
+                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+                nativeInputValueSetter.call(input, randomValue);
+    
+                // 依次触发事件
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: '0' }));
+                input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: '0' }));
+    
+                console.log('已向新输入框输入:', randomValue);
+                clearInterval(inputInterval3);
+            }
+        }
+    }, 3000);
+
+    //<button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-brand border-2 border-background hover:opacity-80 dark:text-background relative -translate-y-[0.075rem] -translate-x-[0.075rem] hover:translate-y-[0.075rem] hover:translate-x-[0.075rem] transition-all ease-in-out z-10 h-11 rounded-xl px-8 w-full">Swap</button>
+    const SwapButton = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.includes('Swap')) {
+                button.click();
+                clearInterval(SwapButton);
+            }
+        });
+    }, 3000);
+
+    //<span class="ml-2 flex-grow">Successfully staked 0.0007 ShMONAD</span>
+    const SuccessfullyStaked = setInterval(() => {
+        const buttons = document.querySelectorAll('span');  
+        buttons.forEach(button => {
+            if (button.textContent.includes('Successfully staked')) {
+                //跳转360
+                window.location.href = 'https://www.360.cn/';
+            }
+        });
+    }, 1000);
+
+})();
+    
+
+
+
+
+
+
 
 
 
