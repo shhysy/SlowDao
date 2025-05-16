@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.39
+// @version      1.40
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -1180,7 +1180,6 @@
     }
 
 })();
-
 //MONAD crystal
 (function() {
     if (window.location.hostname !== 'app.crystal.exchange') {
@@ -1226,9 +1225,6 @@
             }
         });
     }, 3000);
-    
-
-
 
     // 目标路径
     const targetUrl = "https://app.crystal.exchange";
@@ -1367,8 +1363,6 @@
     observer.observe(document.body, { childList: true, subtree: true });
          }
 })();
-
-
 //MONAD SUPER
 (function() {
     'use strict';
@@ -1566,8 +1560,6 @@
     // 启动脚本
     handleSupplyButton();
 })();
-
-
 //monad trade
 (function() {
     if (window.location.hostname !== 'monad.ambient.finance') {
@@ -1691,6 +1683,16 @@
             }
         });
     }, 3000);
+
+    const ConfirmButton = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Submit Swap')) {
+                button.click(); 
+                clearInterval(ConfirmButton);
+            }
+        });
+    }, 30000);
 
     //<button class="sc-ihGpye kCvelR" style="text-transform: none;"><div><span class="_circle_completed_avq9e_13" style="width: 30px; height: 30px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" color="var(--positive)" height="30" width="30" xmlns="http://www.w3.org/2000/svg" style="color: var(--positive);"><path fill="none" stroke-miterlimit="10" stroke-width="32" d="M448 256c0-106-86-192-192-192S64 150 64 256s86 192 192 192 192-86 192-192z"></path><path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M352 176 217.6 336 160 272"></path></svg></span></div><div style="color: var(--positive);">Transaction Confirmed</div><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="20" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M11.9999 13.1714L16.9497 8.22168L18.3639 9.63589L11.9999 15.9999L5.63599 9.63589L7.0502 8.22168L11.9999 13.1714Z"></path></svg></button>
     const TransactionConfirmed = setInterval(() => {
