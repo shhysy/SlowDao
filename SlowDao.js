@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.46
+// @version      1.47
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -126,16 +126,11 @@
         const percent = Math.round((visitedCount / totalSites) * 100);
         document.getElementById('progressInfo').textContent =
             `进度: ${visitedCount}/${totalSites} (${percent}%)`;
-        //如果进度为100%，跳转到下一个网页
+        // 如果进度为100%，重置进度并跳转到360
         if (percent === 100) {
-            // 获取未访问过的网站列表
-            const unvisitedSites = customSiteSequence.filter(site => !visitedSites[site]);
-            // 如果所有网站都已访问过，重置访问记录并跳转到第一个
-            if (unvisitedSites.length === 0) {
-                window.location.href = 'https://www.360.com';
-                visitedSites = {};
-                GM_setValue('visitedSites', visitedSites);
-            }
+            visitedSites = {};
+            GM_setValue('visitedSites', visitedSites);
+            window.location.href = 'https://www.360.com';
         }
     }
 
