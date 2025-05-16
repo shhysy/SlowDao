@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.65
+// @version      1.66
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -44,7 +44,7 @@
     // 自定义跳转列表（在此处添加你的目标网址）
     const customSiteSequence = [
         "https://app.crystal.exchange",
-        "https://monad-test.kinza.finance/#/details/MON",
+        //"https://monad-test.kinza.finance/#/details/MON",
         "https://monad.ambient.finance/",
         "https://shmonad.xyz/",
         "https://www.kuru.io/swap",
