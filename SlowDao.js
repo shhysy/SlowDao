@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.36
+// @version      1.37
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -907,6 +907,15 @@
         }
     }
 })();
+
+
+
+
+
+
+
+
+
 //stake.apr.io
 //app.crystal.exchange
 //https://monad-test.kinza.finance/#/details/MON
@@ -918,6 +927,16 @@
     if (window.location.href !== 'https://monad-test.kinza.finance/#/details/MON') {
         return;
     }
+
+    //检测<span>Supply cap is exceeded</span>如果出现跳转下一个网址
+    var Supplyfalg= false;
+    const SupplyCap = setInterval(() => {
+        const span = document.querySelector('span');
+        if (span.textContent.trim() === 'Supply cap is exceeded' && Supplyfalg == false) {
+            window.location.href = 'https://www.360.com';
+            Supplyfalg = true;
+        }
+    }, 1000);
 
     // 等待页面加载完成
     function waitForElement(selector, callback, maxAttempts = Infinity, interval = 3000) {
@@ -1041,7 +1060,7 @@
                                         if (successElement.textContent.trim() === 'All Done!') {
                                             console.log('Operation completed successfully: All Done!');
                                             // 跳转到下一个 URL（请替换为实际目标 URL）
-                                            window.location.href = 'www.360.com';
+                                            window.location.href = 'https://www.360.com';
                                         } else {
                                             console.log('Did not find "All Done!". Retrying...');
                                             waitForElement('div._SuccessTitle_1542z_137', arguments.callee, Infinity, 5000);
@@ -1068,7 +1087,7 @@
                 button.click();
             }
         });
-    }, 15000);
+    }, 50000);
 
     // 启动脚本
     handleSupplyButton();
@@ -1238,7 +1257,6 @@
 })();
 
 
-
 //MONAD STAK
 (function() {
     'use strict';
@@ -1394,7 +1412,7 @@
                     false
                 );
                 if (inputSuccess) {
-                    console.log("输入框处理完成，等待点击 Stake 按钮");
+                    console.log("输入框处理完成，等待点击 Stake 按钮"); 
                     await waitForStakeButton(inputElement);
                 }
             } else {
