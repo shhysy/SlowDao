@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.70
+// @version      1.71
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -2075,7 +2075,7 @@
         // 选中目标输入框（根据 placeholder 或 class 选）
         const input = document.querySelector('input[placeholder="0.00"].flex.w-full.rounded-md');
         if (input) {
-            if (!input.value || parseFloat(input.value) === 0) {
+            if (!input.value || parseFloat(input.value) === 0 || parseFloat(input.value) === '') {
                 const min = 0.001, max = 0.003;
                 const randomValue = (Math.random() * (max - min) + min).toFixed(3);
 
