@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.83
+// @version      1.84
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -662,7 +662,7 @@
             const conversationSuccess = await retryOperation(performConversations);
 
             if (conversationSuccess) {
-                window.location.href = 'https://www.360.com';
+                window.location.href = 'https://faucet.xion.burnt.com';
                 console.log('所有对话完成');
             } else {
                 console.log('对话未全部完成');
@@ -1117,7 +1117,7 @@
     setInterval(() => {
         clickButtons();
         if (allDisabled>=5) {
-            window.location.href = 'https://www.360.com/';
+            window.location.href = 'https://faucet.xion.burnt.com/';
         }
     }, 3000);
 
