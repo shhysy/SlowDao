@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.80
+// @version      1.81
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -20,6 +20,7 @@
 // @match        *://*.chat.chainopera.ai/*
 // @match        *://*.faucets.chain.link/*
 // @match        *://*.www.baidu.com/*
+// @match        *://*.sosovalue.com/*
 // @match        *://*.www.360.cn/*
 // @match        *://*.www.360.com/*
 // @exclude      https://www.hcaptcha.com/*
@@ -43,7 +44,7 @@
     'use strict';
 
     setInterval(() => {
-        if (window.location.hostname == 'www.kuru.io' || window.location.hostname == 'bebop.xyz' || window.location.hostname == 'shmonad.xyz' || window.location.hostname == 'stake.apr.io' || window.location.hostname == 'app.crystal.exchange' || window.location.hostname == 'monad-test.kinza.finance' || window.location.hostname == 'monad.ambient.finance'){
+        if (window.location.hostname == 'sosovalue.com' || window.location.hostname == 'www.kuru.io' || window.location.hostname == 'bebop.xyz' || window.location.hostname == 'shmonad.xyz' || window.location.hostname == 'stake.apr.io' || window.location.hostname == 'app.crystal.exchange' || window.location.hostname == 'monad-test.kinza.finance' || window.location.hostname == 'monad.ambient.finance'){
             if (document.body.style.zoom != '50%'){
                 document.body.style.zoom = '50%'
             }
@@ -1168,7 +1169,7 @@
                                     const buttonText = button.textContent.trim();
                                     if (button &&
                                         !button.hasAttribute('disabled') &&
-                                        buttonText.includes('Google')) {
+                                        buttonText.includes('钱包') || buttonText.includes('钱包') || buttonText.includes('Wallet')) {
                                         console.log('找到Google按钮，尝试点击:', button); // 调试信息
                                         button.click();
                                         clearInterval(googleInterval);
