@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.73
+// @version      1.74
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -24,6 +24,15 @@
 
 (function() {
     'use strict';
+    
+    setInterval(() => {
+        if (window.location.hostname == 'www.kuru.io' || window.location.hostname == 'bebop.xyz' || window.location.hostname == 'shmonad.xyz' || window.location.hostname == 'stake.apr.io' || window.location.hostname == 'app.crystal.exchange' || window.location.hostname == 'monad-test.kinza.finance' || window.location.hostname == 'monad.ambient.finance'){
+            if (document.body.style.zoom != '50%'){
+                document.body.style.zoom = '50%'
+            }
+        }
+    }, 3000);
+
     // List of target domains
     const targetDomains = [
         'app.crystal.exchange',
@@ -2080,15 +2089,6 @@
 })();
 //MONAD https://www.kuru.io/swap        待完善
 (function() {
-
-    setInterval(() => {
-        if (window.location.hostname == 'www.kuru.io' || window.location.hostname == 'shmonad.xyz' || window.location.hostname == 'stake.apr.io' || window.location.hostname == 'app.crystal.exchange' || window.location.hostname == 'monad-test.kinza.finance' || window.location.hostname == 'monad.ambient.finance'){
-            if (document.body.style.zoom != '50%'){
-                document.body.style.zoom = '50%'
-            }
-        }
-    }, 3000);
-
     if (window.location.hostname !== 'www.kuru.io') {
             return;
     }
