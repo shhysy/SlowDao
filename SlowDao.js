@@ -1,10 +1,27 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.79
+// @version      1.80
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
-// @match        *://*/*
+// @match        *://*.accounts.google.com/*
+// @match        *://*.x.com/*
+// @match        *://*.accounts.google.com/*
+// @match        *://*.accounts.google.com/*
+// @match        *://*.www.kuru.io/*
+// @match        *://*.bebop.xyz/*
+// @match        *://*.shmonad.xyz/*
+// @match        *://*.stake.apr.io/*
+// @match        *://*.app.crystal.exchange/*
+// @match        *://*.monad.ambient.finance/*
+// @match        *://*.monad-test.kinza.finance/*
+// @match        *://*.faucet.xion.burnt.com/*
+// @match        *://*.monad.talentum.id/*
+// @match        *://*.chat.chainopera.ai/*
+// @match        *://*.faucets.chain.link/*
+// @match        *://*.www.baidu.com/*
+// @match        *://*.www.360.cn/*
+// @match        *://*.www.360.com/*
 // @exclude      https://www.hcaptcha.com/*
 // @exclude      https://hcaptcha.com/*
 // @exclude      https://www.cloudflare.com/*
