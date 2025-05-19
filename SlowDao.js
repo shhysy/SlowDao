@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.88
+// @version      1.89
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -395,7 +395,7 @@
         let successCount = 0;
         let currentIndex = 0;
 
-        const targetSuccessCount = Math.floor(Math.random() * 6) + 23; // 生成13-18之间的随机数
+        const targetSuccessCount = Math.floor(Math.random() * 6) + 13; // 生成13-18之间的随机数
         while (successCount < targetSuccessCount) {
             try {
                 // 获取当前要点击的按钮
