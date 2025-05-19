@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.81
+// @version      1.82
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -996,6 +996,7 @@
             }
         });
     }, 5000);
+
     const Skip = setInterval(() => {
         const buttons = document.querySelectorAll('div');
         buttons.forEach(button => {
@@ -1015,6 +1016,28 @@
     if (window.location.hostname !== 'sosovalue.com') {
         return;
     }
+
+    const MetaMask = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('MetaMask') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(MetaMask);
+            }
+        });
+    }, 5000);
+
+    const Wallet = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Wallet') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(Wallet);
+            }
+        });
+    }, 5000);
 
     var checkP = true;
     var f =1
@@ -1162,6 +1185,7 @@
 
                             const googleInterval = setInterval(() => {
                                 // 使用更具体的选择器
+                                
                                 const buttons = document.querySelectorAll('button.MuiButtonBase-root.MuiButton-root');
 
                                 buttons.forEach(button => {
@@ -1169,19 +1193,21 @@
                                     const buttonText = button.textContent.trim();
                                     if (button &&
                                         !button.hasAttribute('disabled') &&
-                                        buttonText.includes('钱包') || buttonText.includes('钱包') || buttonText.includes('Wallet')) {
+                                        buttonText.includes('钱包') || buttonText.includes('Wallet')) {
                                         console.log('找到Google按钮，尝试点击:', button); // 调试信息
                                         button.click();
                                         clearInterval(googleInterval);
                                         return;
                                     }
                                 });
-
+                            
                                 // 如果没找到，输出调试信息
                                 if (buttons.length === 0) {
                                     console.log('未找到任何匹配的按钮');
                                 }
                             }, 1000); // 缩短到1秒检查一次
+
+
 
                             if (isLoginButton) {
                                 button.click();
