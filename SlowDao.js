@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.87
+// @version      1.88
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -44,7 +44,7 @@
     'use strict';
 
     setInterval(() => {
-        if (window.location.hostname == 'sosovalue.com' || window.location.hostname == 'www.kuru.io' || window.location.hostname == 'bebop.xyz' || window.location.hostname == 'shmonad.xyz' || window.location.hostname == 'stake.apr.io' || window.location.hostname == 'app.crystal.exchange' || window.location.hostname == 'monad-test.kinza.finance' || window.location.hostname == 'monad.ambient.finance'){
+        if (window.location.hostname == 'www.kuru.io' || window.location.hostname == 'bebop.xyz' || window.location.hostname == 'shmonad.xyz' || window.location.hostname == 'stake.apr.io' || window.location.hostname == 'app.crystal.exchange' || window.location.hostname == 'monad-test.kinza.finance' || window.location.hostname == 'monad.ambient.finance'){
             if (document.body.style.zoom != '50%'){
                 document.body.style.zoom = '50%'
             }
@@ -277,11 +277,6 @@
         return;
     }
 
-    setInterval(() => {
-        if (document.body.style.zoom != '75%'){
-            document.body.style.zoom = '75%'
-        }
-    }, 3000);
 
     setInterval(() => {
         const metamaskButton = waitForElement('button[type="button"] img[src="/web3-metamask.png"]');
