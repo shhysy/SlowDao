@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.72
+// @version      1.73
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -20,6 +20,33 @@
 // @downloadURL  https://raw.githubusercontent.com/shhysy/SlowDao/main/SlowDao.js
 // @supportURL   https://github.com/shhysy/SlowDao/issues
 // ==/UserScript==
+
+
+(function() {
+    'use strict';
+    // List of target domains
+    const targetDomains = [
+        'app.crystal.exchange',
+        'monad.ambient.finance',
+        'bebop.xyz',
+        'shmonad.xyz',
+        'www.kuru.io'
+    ];
+
+    // Check if current domain matches any target domain
+    const currentDomain = window.location.hostname;
+    if (targetDomains.includes(currentDomain) || targetDomains.some(domain => currentDomain.endsWith(domain))) {
+        // Wait 90 seconds before attempting to click
+        setInterval(() => {
+            const nextSiteBtn = document.querySelector('#nextSiteBtn');
+            if (nextSiteBtn) {
+                nextSiteBtn.click();
+                console.log('Clicked #nextSiteBtn');
+            }
+        },120000); // 90 seconds in milliseconds
+    }
+})();
+
 
 (function() {
     'use strict';
@@ -60,6 +87,7 @@
         "https://monad.ambient.finance/",
         "https://shmonad.xyz/",
         "https://www.kuru.io/swap",
+        "https://bebop.xyz/?network=monad&sell=MON&buy=WMON",
     ];
 
     // 添加控制面板样式
@@ -1140,6 +1168,7 @@
 
 
 
+//MONAD Stak
 (function() {
 
     'use strict';
@@ -1154,16 +1183,12 @@
         for (const button of buttons) {
             const buttonLabel = button.querySelector('.mantine-Button-label');
             if (buttonLabel && buttonLabel.textContent === "Insufficient balance to cover gas fees") {
-                //
-                const nextSiteBtnA = setInterval(() => {
-                    //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
-                    const nextSiteBtn = document.querySelector('#nextSiteBtn');
-                    if (nextSiteBtn) {
-                        nextSiteBtn.click();
-                        clearInterval(nextSiteBtnA);
-                        clearInterval(tourl);
-                    }
-                }, 3000);
+                //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
+                const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                if (nextSiteBtn) {
+                    nextSiteBtn.click();
+                    clearInterval(tourl);
+                }
             }
         }
     }, 2000);
@@ -1226,15 +1251,10 @@
         const notification = document.querySelector('.m_a49ed24.mantine-Notification-body');
         if (notification && notification.textContent.includes("Deposit completed")) {
             console.log("检测到存款完成通知，正在跳转...");
-            //使用定时器
-            const nextSiteBtnA = setInterval(() => {
-                //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
-                const nextSiteBtn = document.querySelector('#nextSiteBtn');
-                if (nextSiteBtn) {
-                    nextSiteBtn.click();
-                    clearInterval(nextSiteBtnA);
-                }
-            }, 3000);
+            const nextSiteBtn = document.querySelector('#nextSiteBtn');
+            if (nextSiteBtn) {
+                nextSiteBtn.click();
+            }
         }
     }
 
@@ -1257,15 +1277,15 @@
                 console.log(`Input element ${selector} not found.`);
                 return false;
             }
-
+    
             if (inputElement.value !== '') {
                 console.log(`Input field ${selector} is not empty. Skipping input.`);
                 return false;
             }
-
+    
             inputElement.focus();
             await randomy(100, 300);
-
+    
             if (isPaste) {
                 await simulatePaste(inputElement, inputValue);
             } else {
@@ -1274,11 +1294,11 @@
                     await randomy(50, 150);
                 }
             }
-
+    
             inputElement.dispatchEvent(new Event(eventType, { bubbles: true, cancelable: true }));
             await randomy(100, 300);
             inputElement.blur();
-
+    
             if (inputElement.value === inputValue.toString()) {
                 console.log(`Input completed for ${selector}`);
                 return true;
@@ -1300,16 +1320,18 @@
         if (inputElement) {
             const inputValue = inputElement.value.trim();
             console.log(`当前输入框值: ${inputValue}`);
-
+    
             if (!inputValue) {
+                // Generate random value between 0.01 and 1.00, with 2 decimal places
+                const randomValue = (Math.random() * (0.05 - 0.01) + 0.01).toFixed(2);
                 const inputSuccess = await inputText(
                     'input.mantine-Input-input.mantine-NumberInput-input[type="text"][inputmode="numeric"]',
                     'change',
-                    '0.01',
+                    randomValue,
                     false
                 );
                 if (inputSuccess) {
-                    console.log("输入框处理完成，等待点击 Stake 按钮");
+                    console.log(`输入框处理完成，输入随机值: ${randomValue}，等待点击 Stake 按钮`);
                     await waitForStakeButton(inputElement);
                 }
             } else {
@@ -1320,6 +1342,7 @@
             console.log("未找到输入框元素");
         }
     }
+    
 
     // 处理 Stake 按钮
     async function waitForStakeButton(inputElement) {
@@ -1387,7 +1410,7 @@
     if (window.location.hostname !== 'app.crystal.exchange') {
         return;
     }
-
+    var swapfalg = 0
     const ConnectWalletwithwallet =setInterval(() => {
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
@@ -1485,9 +1508,17 @@
                 if (!button.disabled) {
                     // 模拟点击按钮
                     button.click();
+                    swapfalg++;
                     console.log('已点击 "Swap" 按钮');
                 } else {
                     console.log('按钮处于禁用状态，无法点击');
+                }
+            }
+            if (swapfalg == 3) {
+                const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                if (nextSiteBtn) {
+                    nextSiteBtn.click();
+                    clearInterval(nextSiteBtnA);
                 }
             }
         }, 30000);
@@ -1539,14 +1570,11 @@
                 }
                 const link = document.querySelector('.view-transaction');
                 if(link){
-                    const nextSiteBtnA = setInterval(() => {
-                        //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
-                        const nextSiteBtn = document.querySelector('#nextSiteBtn');
-                        if (nextSiteBtn) {
-                            nextSiteBtn.click();
-                            clearInterval(nextSiteBtnA);
-                        }
-                    }, 40000);
+                    //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
+                    const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                    if (nextSiteBtn) {
+                        nextSiteBtn.click();
+                    }
                 }
             }
         }, 1000);
@@ -1580,14 +1608,11 @@
     const SupplyCap = setInterval(() => {
         const span = document.querySelector('span');
         if (span.textContent.trim() === 'Supply cap is exceeded' && Supplyfalg == false) {
-            const nextSiteBtnA = setInterval(() => {
-                //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
-                const nextSiteBtn = document.querySelector('#nextSiteBtn');
-                if (nextSiteBtn) {
-                    nextSiteBtn.click();
-                    clearInterval(nextSiteBtnA);
-                }
-            }, 3000);
+            const nextSiteBtn = document.querySelector('#nextSiteBtn');
+            if (nextSiteBtn) {
+                nextSiteBtn.click();
+                clearInterval(SupplyCap);
+            }
             Supplyfalg = true;
         }
     }, 1000);
@@ -1739,7 +1764,6 @@
                                         if (successElement.textContent.trim() === 'All Done!') {
                                             console.log('Operation completed successfully: All Done!');
                                             const nextSiteBtnA = setInterval(() => {
-                                                //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
                                                 const nextSiteBtn = document.querySelector('#nextSiteBtn');
                                                 if (nextSiteBtn) {
                                                     nextSiteBtn.click();
@@ -1793,6 +1817,8 @@
             }
         });
     }, 3000);
+
+
     //<button id="confirm_swap_button" aria-label="" tabindex="0" class="_button_zout7_1 _flat_zout7_18" style="text-transform: none;">Confirm</button>
     const Confirm = setInterval(() => {
         const buttons = document.querySelectorAll('button');
@@ -1857,21 +1883,51 @@
     const inputInterval = setInterval(() => {
         const input = document.querySelector('input#swap_sell_qty._tokenQuantityInput_ispvp_37');
         if (input) {
-            if (!input.value || parseFloat(input.value) === 0) {
+            if (input.value === '' || parseFloat(input.value) === 0 || input.value>0.1) {
                 const min = 0.001, max = 0.003;
                 const randomValue = (Math.random() * (max - min) + min).toFixed(3);
-
-                // 触发原生 input 的 setter
+    
                 const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
                 nativeInputValueSetter.call(input, randomValue);
-
-                // 依次触发事件
+    
                 input.dispatchEvent(new Event('input', { bubbles: true }));
                 input.dispatchEvent(new Event('change', { bubbles: true }));
                 input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: '0' }));
                 input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: '0' }));
-
+    
                 console.log('已向输入框输入:', randomValue);
+                clearInterval(inputInterval);
+            }
+        }
+    }, 3000);
+
+    setInterval(() => {
+        const input = document.querySelector('input#swap_sell_qty._tokenQuantityInput_ispvp_37');
+        if (input) {
+            if (input.value === '' || parseFloat(input.value) === 0 || input.value>0.1) {
+                const min = 0.001, max = 0.003;
+                const randomValue = (Math.random() * (max - min) + min).toFixed(3);
+    
+                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+                nativeInputValueSetter.call(input, randomValue);
+    
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: '0' }));
+                input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: '0' }));
+            }
+        }
+    }, 30000);
+
+
+    setInterval(() => {
+        var selsect_mon = document.querySelector("#swap_sell_token_selector")
+        if(selsect_mon){
+            if(!selsect_mon.innerHTML.includes("MON")){
+                var fanx = document.querySelector("#root > div.sc-bXdtCk.gLqQQC.content-container-trade > section > div.sc-bXdtCk.fNydqz > section > div > div > div:nth-child(3) > div > div.sc-bXdtCk.fVjSfp > button")
+                if(fanx){
+                    fanx.click();
+                }
             }
         }
     }, 3000);
@@ -1918,15 +1974,11 @@
         buttons.forEach(button => {
             if (button.textContent.trim().includes('Transaction Confirmed')) {
                 console.log('交易已确认');
-                const nextSiteBtnA = setInterval(() => {
-                    //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
-                    const nextSiteBtn = document.querySelector('#nextSiteBtn');
-                    if (nextSiteBtn) {
-                        nextSiteBtn.click();
-                        clearInterval(nextSiteBtnA);
-                        clearInterval(TransactionConfirmed);
-                    }
-                }, 3000);
+                const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                if (nextSiteBtn) {
+                    nextSiteBtn.click();
+                    clearInterval(TransactionConfirmed);
+                }
             }
         });
     }, 3000);
@@ -1967,15 +2019,12 @@
         const buttons = document.querySelectorAll('span');
         buttons.forEach(button => {
             if (button.textContent.includes('Successfully staked')) {
-                //跳转https://faucet.xion.burnt.com/
-                const nextSiteBtnA = setInterval(() => {
-                    //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
-                    const nextSiteBtn = document.querySelector('#nextSiteBtn');
-                    if (nextSiteBtn) {
-                        nextSiteBtn.click();
-                        clearInterval(nextSiteBtnA);
-                    }
-                }, 3000);
+                //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
+                const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                if (nextSiteBtn) {
+                    nextSiteBtn.click();
+                    clearInterval(SuccessfullyStaked);
+                }
             }
         });
     }, 1000);
@@ -1985,7 +2034,7 @@
         // 选中目标输入框（可根据 class 或 placeholder 选）
         const input = document.querySelector('input.bg-neutral[placeholder="0"]');
         if (input) {
-            if (!input.value || parseFloat(input.value) === 0) {
+            if (!input.value || parseFloat(input.value) === 0 || input.value==='') {
                 const min = 0.001, max = 0.003;
                 const randomValue = (Math.random() * (max - min) + min).toFixed(3);
 
@@ -2000,7 +2049,6 @@
                 input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: '0' }));
 
                 console.log('已向新输入框输入:', randomValue);
-                clearInterval(inputInterval2);
             }
         }
     }, 3000);
@@ -2032,15 +2080,15 @@
 })();
 //MONAD https://www.kuru.io/swap        待完善
 (function() {
+
     setInterval(() => {
-        if (window.location.hostname !== 'www.kuru.io' || window.location.hostname !== 'shmonad.xyz' || window.location.hostname == 'stake.apr.io' || window.location.hostname == 'app.crystal.exchange' || window.location.hostname == 'monad-test.kinza.finance' || window.location.hostname == 'monad.ambient.finance'){
+        if (window.location.hostname == 'www.kuru.io' || window.location.hostname == 'shmonad.xyz' || window.location.hostname == 'stake.apr.io' || window.location.hostname == 'app.crystal.exchange' || window.location.hostname == 'monad-test.kinza.finance' || window.location.hostname == 'monad.ambient.finance'){
             if (document.body.style.zoom != '50%'){
                 document.body.style.zoom = '50%'
             }
-
-
         }
     }, 3000);
+
     if (window.location.hostname !== 'www.kuru.io') {
             return;
     }
@@ -2068,13 +2116,11 @@
         });
     }, 3000);
 
-
-
     const inputInterval3 = setInterval(() => {
         // 选中目标输入框（根据 placeholder 或 class 选）
         const input = document.querySelector('input[placeholder="0.00"].flex.w-full.rounded-md');
         if (input) {
-            if (!input.value || parseFloat(input.value) === 0 || parseFloat(input.value) === '') {
+            if (!input.value || parseFloat(input.value) === 0) {
                 const min = 0.001, max = 0.003;
                 const randomValue = (Math.random() * (max - min) + min).toFixed(3);
 
@@ -2105,41 +2151,130 @@
         });
     }, 3000);
 
-    setInterval(() => {
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-            if (button.textContent.includes('Retry the swap')) {
-                button.click();
-                clearInterval(SwapButton);
-            }
-        });
-    }, 3000);
-
-    setInterval(() => {
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-            if (button.textContent.includes('Swap')) {
-                button.click();
-                clearInterval(SwapButton);
-            }
-        });
-    }, 30000);
-
     //<button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-brand border-2 border-background hover:opacity-80 dark:text-background relative -translate-y-[0.075rem] -translate-x-[0.075rem] hover:translate-y-[0.075rem] hover:translate-x-[0.075rem] transition-all ease-in-out z-10 h-10 rounded-xl px-4 py-2 w-full" data-sentry-element="Button" data-sentry-source-file="SwapSuccess.tsx">Go back</button>
     const GoBackButton = setInterval(() => {
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
             if (button.textContent.includes('Go back') || button.textContent.includes('Retry the swap')) {
-                const nextSiteBtnA = setInterval(() => {
-                    //<div id="manualJumpPanel">        <button id="nextSiteBtn">跳转到下一个网站</button>
-                    const nextSiteBtn = document.querySelector('#nextSiteBtn');
-                    if (nextSiteBtn) {
-                        nextSiteBtn.click();
-                        clearInterval(nextSiteBtnA);
-                    }
-                }, 3000);
+                const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                if (nextSiteBtn) {
+                    nextSiteBtn.click();
+                    clearInterval(GoBackButton);
+                }
             }
         });
     }, 3000);
+})();
+//MONAD bebop
+(function() {
+    'use strict';
+    if (window.location.hostname !== 'bebop.xyz') {
+        return;
+    }
+    //连接钱包
+    const Done = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.includes('Done') &&
+                !button.hasAttribute('disabled')) {
+                const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                if (nextSiteBtn) {
+                    nextSiteBtn.click();
+                    clearInterval(Done);
+                }
+            }
+        });
+    }, 3000);
+
+    const Wrap = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.includes('Wrap') &&
+                !button.hasAttribute('disabled')) {
+                    button.click();
+                    clearInterval(Wrap);
+            }
+        });
+    }, 3000);
+
+    const ConnectWallet = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.includes('Connect wallet') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(ConnectWallet);
+            }
+        });
+    }, 3000);
+
+
+    //选择小狐狸
+    const SelectMetaMask = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.includes('MetaMask') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(SelectMetaMask);
+            }
+        });
+    }, 3000);
+
+    // Function to generate a random value between 0.001 and 0.003
+    function getRandomAmount() {
+        const min = 0.001;
+        const max = 0.003;
+        return (Math.random() * (max - min) + min).toFixed(3);
+    }
+
+    // Start the interval to check every 3 seconds
+    const inputInterval = setInterval(() => {
+        // Select the target input field by data-testid
+        const input = document.querySelector('[data-testid="0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE-amount-input"]');
+        
+        if (!input) {
+            console.log(`[${new Date().toLocaleTimeString()}] Input field not found`);
+            return;
+        }
+
+        // Verify placeholder is "0"
+        if (input.placeholder !== "0") {
+            console.log(`[${new Date().toLocaleTimeString()}] Skipping input: placeholder is "${input.placeholder}", expected "0"`);
+            return;
+        }
+
+        // Check if input is empty or has a value of 0
+        if (!input.value || parseFloat(input.value) === 0) {
+            const randomValue = getRandomAmount();
+
+            try {
+                // Use native input value setter
+                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+                    window.HTMLInputElement.prototype, 'value'
+                ).set;
+                nativeInputValueSetter.call(input, randomValue);
+
+                // Dispatch events to simulate user input
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: '0' }));
+                input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: '0' }));
+
+                // Verify input
+                if (input.value === randomValue) {
+                    console.log(`[${new Date().toLocaleTimeString()}] Successfully input ${randomValue} into input field`);
+                    clearInterval(inputInterval);
+                } else {
+                    console.log(`[${new Date().toLocaleTimeString()}] Input failed: expected "${randomValue}", got "${input.value}"`);
+                }
+            } catch (error) {
+                console.error(`[${new Date().toLocaleTimeString()}] Error during input:`, error);
+            }
+        } else {
+            console.log(`[${new Date().toLocaleTimeString()}] Skipping input: field contains "${input.value}"`);
+        }
+    }, 3000); // Check every 3 seconds
+    // Your code here...
 })();
 
