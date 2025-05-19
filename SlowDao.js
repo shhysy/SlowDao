@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.77
+// @version      1.78
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -248,7 +248,7 @@
     var isBaidu = false;
     setInterval(() => {
         if (window.location.hostname == 'www.baidu.com' && !isBaidu) {
-            window.location.href = 'https://chat.chainopera.ai';
+            window.location.href = 'https://chat.chainopera.ai/login';
             isBaidu = true;
         }
     }, 3000);
