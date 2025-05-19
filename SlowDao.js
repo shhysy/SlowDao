@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.74
+// @version      1.75
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*/*
@@ -24,7 +24,7 @@
 
 (function() {
     'use strict';
-    
+
     setInterval(() => {
         if (window.location.hostname == 'www.kuru.io' || window.location.hostname == 'bebop.xyz' || window.location.hostname == 'shmonad.xyz' || window.location.hostname == 'stake.apr.io' || window.location.hostname == 'app.crystal.exchange' || window.location.hostname == 'monad-test.kinza.finance' || window.location.hostname == 'monad.ambient.finance'){
             if (document.body.style.zoom != '50%'){
@@ -248,7 +248,7 @@
     var isBaidu = false;
     setInterval(() => {
         if (window.location.hostname == 'www.baidu.com' && !isBaidu) {
-            window.location.href = 'https://app.gata.xyz?invite_code=91p11vx9';
+            window.location.href = 'https://chat.chainopera.ai';
             isBaidu = true;
         }
     }, 3000);
