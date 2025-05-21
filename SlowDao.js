@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.92
+// @version      1.93
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -1010,6 +1010,225 @@
     // Your code here...
 })();
 
+//银河注册及登录
+(function() {
+    'use strict';
+
+    if (window.location.hostname !== 'app.galxe.com') {
+        return;
+    }
+
+    const clickDailyBlog = new Promise((resolve) => {
+        const Daily = setInterval(() => {
+            const buttons = document.querySelectorAll('div');
+            buttons.forEach(button => {
+                if (button.textContent.trim().includes('Daily Visit the Sahara AI Blog') &&
+                    !button.hasAttribute('disabled')) {
+                    console.log('Blog button found and clicked');
+                    button.click();
+                    clearInterval(Daily);
+                    resolve();
+                }
+            });
+        }, 5000);
+    });
+    
+    // Promise to handle clicking the Twitter button
+    const clickDailyTwitter = new Promise((resolve) => {
+        const DailyVisittheSaharaAITwitter = setInterval(() => {
+            const buttons = document.querySelectorAll('div');
+            buttons.forEach(button => {
+                if (button.textContent.trim().includes('Daily Visit the Sahara AI Twitter') &&
+                    !button.hasAttribute('disabled')) {
+                    console.log('Twitter button found and clicked');
+                    button.click();
+                    clearInterval(DailyVisittheSaharaAITwitter);
+                    resolve();
+                }
+            });
+        }, 5000);
+    });
+    
+    // Function to click the verification buttons using XPath
+    const clickVerificationButtons = () => {
+        const xpathButtons = [
+            '/html/body/div[1]/main/div[1]/section/div/div[1]/div/div[3]/div[1]/div[2]/div/div[1]/button',
+            '/html/body/div[1]/main/div[1]/section/div/div[1]/div/div[3]/div[2]/div[2]/div/div[1]/button'
+        ];
+    
+        xpathButtons.forEach((xpath, index) => {
+            const button = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            if (button) {
+                if (!button.hasAttribute('disabled')) {
+                    console.log(`Verification button ${index + 1} found and clicked`);
+                    button.click();
+                } else {
+                    console.log(`Verification button ${index + 1} is disabled`);
+                }
+            } else {
+                console.log(`Verification button ${index + 1} not found at XPath: ${xpath}`);
+            }
+        });
+    };
+    
+
+
+    function getRandomNickname() {
+        const adjectives = ['Cool', 'Swift', 'Bright', 'Mystic', 'Silent', 'Vivid', 'Bold', 'Cosmic'];
+        const nouns = ['Star', 'Wolf', 'Shadow', 'Flame', 'River', 'Sky', 'Knight', 'Echo'];
+        const randomAdj = adjectives[Math.floor(Math.random() * adjectives.length)];
+        const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+        const randomNumber = Math.floor(Math.random() * 100);
+        return `${randomAdj}${randomNoun}${randomNumber}`;
+    }
+
+
+    const Sign = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+        if (button.textContent.trim().includes('Sign up') &&
+            !button.hasAttribute('disabled')) {
+                const input = document.querySelector('input[placeholder="Enter username"]');
+
+                if (!input) {
+                    console.log(`[${new Date().toLocaleTimeString()}] Input field not found`);
+                    return;
+                }
+                if (input.value != '') {
+                    button.click();
+                    clearInterval(Sign);
+                }
+            }
+        });
+    }, 5000);
+
+    const interval = setInterval(() => {
+        // Select the checkbox button by its attributes
+        const checkbox = document.querySelector('button[role="checkbox"][id="terms1"]');
+    
+        if (!checkbox) {
+            console.log(`[${new Date().toLocaleTimeString()}] Checkbox button not found`);
+            return;
+        }
+    
+        try {
+            // Check if the checkbox is not already checked
+            if (checkbox.getAttribute('aria-checked') === 'false') {
+                // Simulate a click on the checkbox
+                checkbox.click();
+                console.log(`[${new Date().toLocaleTimeString()}] Successfully clicked checkbox with id "terms1"`);
+    
+                // Verify if the checkbox is now checked
+                if (checkbox.getAttribute('aria-checked') === 'true') {
+                    console.log(`[${new Date().toLocaleTimeString()}] Checkbox is now checked`);
+                    clearInterval(interval); // Stop the interval once clicked
+                } else {
+                    console.log(`[${new Date().toLocaleTimeString()}] Checkbox click failed: still unchecked`);
+                }
+            } else {
+                console.log(`[${new Date().toLocaleTimeString()}] Checkbox is already checked`);
+                clearInterval(interval); // Stop if already checked
+            }
+        } catch (error) {
+            console.error(`[${new Date().toLocaleTimeString()}] Error during checkbox click:`, error);
+        }
+    }, 3000); // Check every 3 seconds
+
+
+
+
+    const inputInterval = setInterval(() => {
+        // Select the target input field by placeholder (based on your HTML snippet)
+        const input = document.querySelector('input[placeholder="Enter username"]');
+    
+        if (!input) {
+            console.log(`[${new Date().toLocaleTimeString()}] Input field not found`);
+            return;
+        }
+    
+        // Check if input is empty
+        if (!input.value) {
+            const randomNickname = getRandomNickname(); // Use the nickname generator
+    
+            try {
+                // Use native input value setter
+                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+                    window.HTMLInputElement.prototype, 'value'
+                ).set;
+                nativeInputValueSetter.call(input, randomNickname);
+    
+                // Dispatch events to simulate user input
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Enter' }));
+                input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: 'Enter' }));
+    
+                // Verify input
+                if (input.value === randomNickname) {
+                    console.log(`[${new Date().toLocaleTimeString()}] Successfully input ${randomNickname} into input field`);
+                    clearInterval(inputInterval);
+                } else {
+                    console.log(`[${new Date().toLocaleTimeString()}] Input failed: expected "${randomNickname}", got "${input.value}"`);
+                }
+            } catch (error) {
+                console.error(`[${new Date().toLocaleTimeString()}] Error during input:`, error);
+            }
+        } else {
+            console.log(`[${new Date().toLocaleTimeString()}] Skipping input: field contains "${input.value}"`);
+        }
+    }, 3000);
+
+    //<button class="inline-flex text-info items-center justify-center whitespace-nowrap font-semibold transition-colors disabled:pointer-events-none cursor-pointer bg-primary hover:bg-primary-lighten1 active:bg-primary disabled:bg-component-btnDisable disabled:text-info-disable h-[36px] rounded-[6px] py-2 text-xs leading-[18px] px-[24px]" type="button">Log in</button>
+    const Login = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Log in') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(Login);
+            }
+        });
+    }, 5000);
+
+    const Continuetoccess = setInterval(() => {
+        const buttons = document.querySelectorAll('div');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Continue to Access') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(Continuetoccess);
+            }
+        });
+    }, 1000);
+
+
+
+    const Confirm = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Confirm') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(Confirm);
+            }
+        });
+    }, 5000);
+
+    
+
+    const MetaMask = setInterval(() => {
+        const buttons = document.querySelectorAll('div');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('MetaMask') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(MetaMask);
+            }
+        });
+    }, 5000);
+    // Your code here...
+})();
+
 
 //soso
 (function() {
@@ -1027,6 +1246,7 @@
             }
         });
     }, 5000);
+    
 
     const Wallet = setInterval(() => {
         const buttons = document.querySelectorAll('button');
