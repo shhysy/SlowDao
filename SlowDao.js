@@ -278,16 +278,17 @@
     }
 
 
-    // setInterval(() => {
-    //     const metamaskButton = waitForElement('button[type="button"] img[src="/web3-metamask.png"]');
-    //     if (metamaskButton) {
-    //         console.log('找到MetaMask按钮，准备点击');
-    //         metamaskButton.parentElement.click();
-    //         console.log('已点击MetaMask按钮');
-    //     } else {
-    //         console.log('未找到MetaMask按钮，继续执行');
-    //     }
-    // }, 60000);
+    const meta = setInterval(() => {
+        const metamaskButton = waitForElement('button[type="button"] img[src="/web3-metamask.png"]');
+        if (metamaskButton) {
+            console.log('找到MetaMask按钮，准备点击');
+            metamaskButton.parentElement.click();
+            clearInterval(meta)
+            console.log('已点击MetaMask按钮');
+        } else {
+            console.log('未找到MetaMask按钮，继续执行');
+        }
+    }, 60000);
 
 
     // 配置参数
