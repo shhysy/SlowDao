@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.95
+// @version      1.96
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -1019,58 +1019,133 @@
         return;
     }
 
-    const clickDailyBlog = new Promise((resolve) => {
-        const Daily = setInterval(() => {
-            const buttons = document.querySelectorAll('div');
-            buttons.forEach(button => {
-                if (button.textContent.trim().includes('Daily Visit the Sahara AI Blog') &&
-                    !button.hasAttribute('disabled')) {
-                    console.log('Blog button found and clicked');
-                    button.click();
-                    clearInterval(Daily);
-                    resolve();
-                }
-            });
-        }, 5000);
-    });
-    
-    // Promise to handle clicking the Twitter button
-    const clickDailyTwitter = new Promise((resolve) => {
-        const DailyVisittheSaharaAITwitter = setInterval(() => {
-            const buttons = document.querySelectorAll('div');
-            buttons.forEach(button => {
-                if (button.textContent.trim().includes('Daily Visit the Sahara AI Twitter') &&
-                    !button.hasAttribute('disabled')) {
-                    console.log('Twitter button found and clicked');
-                    button.click();
-                    clearInterval(DailyVisittheSaharaAITwitter);
-                    resolve();
-                }
-            });
-        }, 5000);
-    });
-    
-    // Function to click the verification buttons using XPath
-    const clickVerificationButtons = () => {
-        const xpathButtons = [
-            '/html/body/div[1]/main/div[1]/section/div/div[1]/div/div[3]/div[1]/div[2]/div/div[1]/button',
-            '/html/body/div[1]/main/div[1]/section/div/div[1]/div/div[3]/div[2]/div[2]/div/div[1]/button'
-        ];
-    
-        xpathButtons.forEach((xpath, index) => {
-            const button = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-            if (button) {
-                if (!button.hasAttribute('disabled')) {
-                    console.log(`Verification button ${index + 1} found and clicked`);
-                    button.click();
+    // Random nickname generator
+    function getRandomNickname() {
+        const adjectives = ['Cool', 'Swift', 'Bright', 'Mystic'];
+        const nouns = ['Star', 'Wolf', 'Shadow', 'Flame'];
+        const randomAdj = adjectives[Math.floor(Math.random() * adjectives.length)];
+        const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+        const randomNumber = Math.floor(Math.random() * 100);
+        return `${randomAdj}${randomNoun}${randomNumber}`;
+    }
+
+    // Main interval to handle all actions
+    const mainInterval = setInterval(() => {
+        // Step 1: Fill the username input
+        const input = document.querySelector('input[placeholder="Enter username"]');
+        if (input && !input.value) {
+            const randomNickname = getRandomNickname();
+            try {
+                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+                    window.HTMLInputElement.prototype, 'value'
+                ).set;
+                nativeInputValueSetter.call(input, randomNickname);
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Enter' }));
+                input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: 'Enter' }));
+
+                if (input.value === randomNickname) {
+                    console.log(`[${new Date().toLocaleTimeString()}] Successfully input ${randomNickname}`);
                 } else {
-                    console.log(`Verification button ${index + 1} is disabled`);
+                    console.log(`[${new Date().toLocaleTimeString()}] Input failed: expected "${randomNickname}", got "${input.value}"`);
+                    return;
+                }
+            } catch (error) {
+                console.error(`[${new Date().toLocaleTimeString()}] Error during input:`, error);
+                return;
+            }
+        }
+
+        // Step 2: Click the terms checkbox
+        const checkbox = document.querySelector('button[role="checkbox"][id="terms1"]');
+        if (checkbox && checkbox.getAttribute('aria-checked') === 'false') {
+            try {
+                checkbox.click();
+                if (checkbox.getAttribute('aria-checked') === 'true') {
+                    console.log(`[${new Date().toLocaleTimeString()}] Checkbox clicked and checked`);
+                } else {
+                    console.log(`[${new Date().toLocaleTimeString()}] Checkbox click failed`);
+                    return;
+                }
+            } catch (error) {
+                console.error(`[${new Date().toLocaleTimeString()}] Error during checkbox click:`, error);
+                return;
+            }
+        }
+
+        // Step 3: Click the "Daily Visit" buttons
+        let allDailyButtonsClicked = true;
+
+        // Daily Visit the Sahara AI Blog
+        const blogButton = Array.from(document.querySelectorAll('div')).find(button =>
+            button.textContent.trim().includes('Daily Visit the Sahara AI Blog') && !button.hasAttribute('disabled')
+        );
+        if (blogButton) {
+            try {
+                blogButton.click();
+                console.log(`[${new Date().toLocaleTimeString()}] Clicked 'Daily Visit the Sahara AI Blog' button`);
+            } catch (error) {
+                console.error(`[${new Date().toLocaleTimeString()}] Error clicking Blog button:`, error);
+                allDailyButtonsClicked = false;
+            }
+        }
+
+        // Daily Visit the Sahara AI Twitter
+        const twitterButton = Array.from(document.querySelectorAll('div')).find(button =>
+            button.textContent.trim().includes('Daily Visit the Sahara AI Twitter') && !button.hasAttribute('disabled')
+        );
+        if (twitterButton) {
+            try {
+                twitterButton.click();
+                console.log(`[${new Date().toLocaleTimeString()}] Clicked 'Daily Visit the Sahara AI Twitter' button`);
+            } catch (error) {
+                console.error(`[${new Date().toLocaleTimeString()}] Error clicking Twitter button:`, error);
+                allDailyButtonsClicked = false;
+            }
+        }
+
+        // Step 4: Click the two SVG buttons if all previous actions are complete
+        if (!input?.value || !checkbox || checkbox.getAttribute('aria-checked') !== 'true' || blogButton || twitterButton) {
+            console.log(`[${new Date().toLocaleTimeString()}] Waiting for previous actions to complete`);
+            return;
+        }
+
+        const svgButtons = document.querySelectorAll('button[data-state="closed"]');
+        if (svgButtons.length === 0) {
+            console.log(`[${new Date().toLocaleTimeString()}] SVG buttons not found`);
+            return;
+        }
+
+        svgButtons.forEach((button, index) => {
+            if (!button.hasAttribute('disabled')) {
+                try {
+                    button.click();
+                    console.log(`[${new Date().toLocaleTimeString()}] Clicked SVG button ${index + 1}`);
+                } catch (error) {
+                    console.error(`[${new Date().toLocaleTimeString()}] Error clicking SVG button ${index + 1}:`, error);
                 }
             } else {
-                console.log(`Verification button ${index + 1} not found at XPath: ${xpath}`);
+                console.log(`[${new Date().toLocaleTimeString()}] SVG button ${index + 1} is disabled`);
             }
         });
-    };
+
+        // Stop the interval if all actions are complete
+        if (allDailyButtonsClicked && svgButtons.length === 2) {
+            console.log(`[${new Date().toLocaleTimeString()}] All actions completed, stopping interval`);
+            location.reload();
+        }
+    }, 5000);
+
+    const successCheckInterval = setInterval(() => {
+        // Select all buttons matching the criteria
+        const successButtons = document.querySelectorAll('button[id="radix-«r2f»"][aria-haspopup="menu"][data-state="closed"] .text-success');
+    
+        if (successButtons.length >= 2) {
+            console.log(`[${new Date().toLocaleTimeString()}] Success: ${successButtons.length} success buttons detected!`);
+            window.close();
+        } 
+    }, 5000); // Check every 5 seconds
     
 
 
