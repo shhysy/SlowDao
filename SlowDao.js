@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.97
+// @version      1.98
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -123,19 +123,21 @@
     GM_addStyle(`
         #manualJumpPanel {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 10px;
+            right: 10px;
             z-index: 99999;
             background: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 5px;
+            border-radius: 3px;
             font-family: Arial, sans-serif;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            min-width: 250px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            min-width: 125px;
+            transform: scale(0.5);
+            transform-origin: bottom right;
         }
         #manualJumpPanel h3 {
-            margin: 0 0 10px 0;
+            margin: 0 0 5px 0;
             padding: 0;
             font-size: 14px;
             color: #4CAF50;
@@ -144,9 +146,9 @@
             background: #4CAF50;
             color: white;
             border: none;
-            padding: 5px 10px;
-            margin: 5px 0;
-            border-radius: 3px;
+            padding: 3px 5px;
+            margin: 3px 0;
+            border-radius: 2px;
             cursor: pointer;
             width: 100%;
             text-align: left;
@@ -157,22 +159,22 @@
         #manualJumpPanel .current-site {
             font-size: 12px;
             color: #ccc;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             word-break: break-all;
         }
         #manualJumpPanel .error-notice {
             color: #ff6b6b;
             font-size: 12px;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
         #manualJumpPanel .progress {
             font-size: 12px;
             color: #4CAF50;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
         #manualJumpPanel .close-btn {
             background: #f44336 !important;
-            margin-top: 10px;
+            margin-top: 5px;
         }
     `);
 
