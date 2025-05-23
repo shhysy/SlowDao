@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.100
+// @version      1.101
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -255,6 +255,8 @@
 })();
 
 (function() {
+    'use strict';
+
     var isBaidu = false;
     setInterval(() => {
         if (window.location.hostname == 'www.baidu.com' && !isBaidu) {
@@ -262,27 +264,44 @@
             isBaidu = true;
         }
     }, 3000);
-
-
     
     if (window.location.hostname !== 'chat.chainopera.ai') {
         return;
     }
 
-
-    const meta = setInterval(() => {
-        const metamaskButton = waitForElement('button[type="button"] img[src="/web3-metamask.png"]');
-        if (metamaskButton) {
-            console.log('找到MetaMask按钮，准备点击');
-            metamaskButton.parentElement.click();
-            clearInterval(meta)
-            console.log('已点击MetaMask按钮');
-        } else {
-            console.log('未找到MetaMask按钮，继续执行');
+    function clickOpenButton() {
+        // Select the BUTTON element that contains an SVG with lucide-panel-left-open
+        const openButton = document.querySelector('button.text-gray-400.hover\\:text-gray-800:has(svg.lucide-panel-left-open)');
+        if (!openButton) {
+            console.warn('Open button not found, will retry on next interval...');
+            return;
         }
-    }, 60000);
 
+        // Verify the element is a button
+        if (!(openButton instanceof HTMLButtonElement)) {
+            console.error('Selected element is not a button:', openButton);
+            return;
+        }
 
+        // Simulate a click
+        try {
+            openButton.click();
+            console.log('Successfully clicked the open button');
+        } catch (err) {
+            console.error('Failed to click the button:', err);
+        }
+    }
+
+    // Initialize the timer to check and click every 3 seconds
+    setInterval(clickOpenButton, 3000);
+
+    // Initial attempt after DOM loads
+    window.addEventListener('load', clickOpenButton);
+
+    // Fallback for dynamic pages
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(clickOpenButton, 500);
+    }
     // 配置参数
     const config = {
         maxRetries: 3,
@@ -421,16 +440,21 @@
                         if (responseComplete) {
                             hasResponse = true;
                             console.log('对话响应完成');
+                             await new Promise(resolve => setTimeout(resolve, 5000));
                             break;
                         }
                         // 点击停止按钮
-                        const stopButton = await waitForElement('button.bg-destructive', 20000);
+                        const stopButton = await waitForElement('button.bg-destructive', 10000);
                         if (!stopButton) {
+                            console.log('停止按钮不存在');
+                             await new Promise(resolve => setTimeout(resolve, 5000));
                             break;
                         }
-                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        await new Promise(resolve => setTimeout(resolve, 3000));
                     }
+
                     // 点击停止按钮
+                    /**
                     const stopButton = await waitForElement('button.bg-destructive', 20000);
                     if (stopButton) {
                         stopButton.click();
@@ -450,7 +474,7 @@
                     } else {
                         console.log('未找到停止按钮或等待超时');
                     }
-
+                    */
                     const newChatButton = await waitForElement('button.relative.py-3.bg-background svg.lucide-message-square-plus', 5000);
                     if (newChatButton) {
                         newChatButton.closest('button').click();
@@ -462,98 +486,106 @@
 
                 } else {
 
-                    console.log(`未找到对话按钮，尝试下一个`);
 
-                    //检测聊天按钮
-                    let allButtonsExist = false;
-                    for (const xpath of conversationXPaths) {
-                        const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-                        if (element) {
-                            allButtonsExist = true;
-                            break;
-                        }
+                    const newChatButton = await waitForElement('button.relative.py-3.bg-background svg.lucide-message-square-plus', 5000);
+                    if (newChatButton) {
+                        newChatButton.closest('button').click();
+                        console.log('成功点击新对话按钮');
+                        await new Promise(resolve => setTimeout(resolve, 5000));
+                    } else {
+                        console.log('未找到新对话按钮');
                     }
-                    await new Promise(resolve => setTimeout(resolve, 5000));
 
-                    if (!allButtonsExist) {
-                        // 点击Discover按钮
-                        const discoverButton = await waitForElement('button[type="button"] svg path[d*="M12 5.75L12.6107"]', 20000);
-                        if (discoverButton) {
-                            discoverButton.closest('button').click();
-                            console.log('成功点击Discover按钮');
-                            await new Promise(resolve => setTimeout(resolve, 3000));
+                    // //检测聊天按钮
+                    // let allButtonsExist = false;
+                    // for (const xpath of conversationXPaths) {
+                    //     const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+                    //     if (element) {
+                    //         allButtonsExist = true;
+                    //         break;
+                    //     }
+                    // }
+                    // await new Promise(resolve => setTimeout(resolve, 5000));
 
-                            // 定义目标Agent名称列表
-                            const targetAgents = [
-                                'Token Analytics Agent',
-                                'Caila Agent',
-                                'Market Sentiment Radar',
-                                'Meme Coin Radar'
-                            ];
+                    // if (!allButtonsExist) {
+                    //     // 点击Discover按钮
+                    //     const discoverButton = await waitForElement('button[type="button"] svg path[d*="M12 5.75L12.6107"]', 20000);
+                    //     if (discoverButton) {
+                    //         discoverButton.closest('button').click();
+                    //         console.log('成功点击Discover按钮');
+                    //         await new Promise(resolve => setTimeout(resolve, 3000));
 
-                            // 查找并点击目标Agent卡片
-                            let agentFound = false;
-                            for (const agentName of targetAgents) {
-                                // 查找所有可能的Agent卡片
-                                const agentCards = document.querySelectorAll('div.cursor-pointer.group.p-3.sm\\:p-4.rounded-xl');
-                                for (const card of agentCards) {
-                                    const agentTitle = card.querySelector('h3');
-                                    if (agentTitle && agentTitle.textContent.includes(agentName)) {
-                                        card.click();
-                                        console.log(`成功点击 ${agentName} 卡片`);
-                                        agentFound = true;
-                                        await new Promise(resolve => setTimeout(resolve, 2000));
-                                        break;
-                                    }
-                                }
-                                if (agentFound) break;
-                            }
+                    //         // 定义目标Agent名称列表
+                    //         const targetAgents = [
+                    //             'Token Analytics Agent',
+                    //             'Caila Agent',
+                    //             'Market Sentiment Radar',
+                    //             'Meme Coin Radar'
+                    //         ];
 
-                            if (!agentFound) {
-                                console.log('未找到目标Agent卡片，尝试重新点击Discover按钮');
-                                // 尝试重新点击Discover按钮
-                                const retryDiscoverButton = await waitForElement('button[type="button"] svg path[d*="M12 5.75L12.6107"]', 20000);
-                                if (retryDiscoverButton) {
-                                    retryDiscoverButton.closest('button').click();
-                                    console.log('重新点击Discover按钮');
-                                    await new Promise(resolve => setTimeout(resolve, 3000));
+                    //         // 查找并点击目标Agent卡片
+                    //         let agentFound = false;
+                    //         for (const agentName of targetAgents) {
+                    //             // 查找所有可能的Agent卡片
+                    //             const agentCards = document.querySelectorAll('div.cursor-pointer.group.p-3.sm\\:p-4.rounded-xl');
+                    //             for (const card of agentCards) {
+                    //                 const agentTitle = card.querySelector('h3');
+                    //                 if (agentTitle && agentTitle.textContent.includes(agentName)) {
+                    //                     card.click();
+                    //                     console.log(`成功点击 ${agentName} 卡片`);
+                    //                     agentFound = true;
+                    //                     await new Promise(resolve => setTimeout(resolve, 2000));
+                    //                     break;
+                    //                 }
+                    //             }
+                    //             if (agentFound) break;
+                    //         }
 
-                                    // 再次尝试查找目标Agent卡片
-                                    for (const agentName of targetAgents) {
-                                        const retryAgentCards = document.querySelectorAll('div.cursor-pointer.group.p-3.sm\\:p-4.rounded-xl');
-                                        for (const card of retryAgentCards) {
-                                            const agentTitle = card.querySelector('h3');
-                                            if (agentTitle && agentTitle.textContent.includes(agentName)) {
-                                                card.click();
-                                                console.log(`成功点击 ${agentName} 卡片`);
-                                                agentFound = true;
-                                                await new Promise(resolve => setTimeout(resolve, 2000));
-                                                break;
-                                            }
-                                        }
-                                        if (agentFound) break;
-                                    }
-                                }
-                            }
+                    //         if (!agentFound) {
+                    //             console.log('未找到目标Agent卡片，尝试重新点击Discover按钮');
+                    //             // 尝试重新点击Discover按钮
+                    //             const retryDiscoverButton = await waitForElement('button[type="button"] svg path[d*="M12 5.75L12.6107"]', 20000);
+                    //             if (retryDiscoverButton) {
+                    //                 retryDiscoverButton.closest('button').click();
+                    //                 console.log('重新点击Discover按钮');
+                    //                 await new Promise(resolve => setTimeout(resolve, 3000));
 
-                            if (!agentFound) {
-                                console.log('仍然未找到目标Agent卡片，跳过当前对话');
-                                continue;
-                            }
+                    //                 // 再次尝试查找目标Agent卡片
+                    //                 for (const agentName of targetAgents) {
+                    //                     const retryAgentCards = document.querySelectorAll('div.cursor-pointer.group.p-3.sm\\:p-4.rounded-xl');
+                    //                     for (const card of retryAgentCards) {
+                    //                         const agentTitle = card.querySelector('h3');
+                    //                         if (agentTitle && agentTitle.textContent.includes(agentName)) {
+                    //                             card.click();
+                    //                             console.log(`成功点击 ${agentName} 卡片`);
+                    //                             agentFound = true;
+                    //                             await new Promise(resolve => setTimeout(resolve, 2000));
+                    //                             break;
+                    //                         }
+                    //                     }
+                    //                     if (agentFound) break;
+                    //                 }
+                    //             }
+                    //         }
 
-                            // 点击Try Agent按钮
-                            const tryAgentButton = await waitForElement('div[class*="relative z-10"] p.absolute', 20000);
-                            if (tryAgentButton) {
-                                tryAgentButton.click();
-                                console.log('成功点击Try Agent按钮');
-                                await new Promise(resolve => setTimeout(resolve, 2000));
-                            } else {
-                                console.log('未找到Try Agent按钮或等待超时');
-                            }
-                        } else {
-                            console.log('未找到Discover按钮或等待超时');
-                        }
-                    }
+                    //         if (!agentFound) {
+                    //             console.log('仍然未找到目标Agent卡片，跳过当前对话');
+                    //             continue;
+                    //         }
+
+                    //         // 点击Try Agent按钮
+                    //         const tryAgentButton = await waitForElement('div[class*="relative z-10"] p.absolute', 20000);
+                    //         if (tryAgentButton) {
+                    //             tryAgentButton.click();
+                    //             console.log('成功点击Try Agent按钮');
+                    //             await new Promise(resolve => setTimeout(resolve, 2000));
+                    //         } else {
+                    //             console.log('未找到Try Agent按钮或等待超时');
+                    //         }
+                    //     } else {
+                    //         console.log('未找到Discover按钮或等待超时');
+                    //     }
+                    //}
                 }
 
                 // 移动到下一个对话按钮
@@ -594,36 +626,19 @@
         try {
             checkDomain();
 
-            await new Promise(resolve => setTimeout(resolve, 13000));
+            // 检查钱包是否已经连接
+            const connectedWalletButton = await waitForElement('button.inline-flex.items-center.justify-center span.flex.gap-2.items-center.text-xs svg.lucide-wallet', 5000);
+            if (connectedWalletButton && connectedWalletButton.closest('span').textContent.includes('0x')) {
+                console.log('钱包已经连接，跳过MetaMask连接步骤');
+            } else {
+                // 执行MetaMask连接
+                await retryOperation(clickMetaMask);
 
-            await retryOperation(clickMetaMask);
+                // 等待一段时间让钱包连接完成
+                await new Promise(resolve => setTimeout(resolve, 13000));
 
-            // 持续尝试连接钱包直到成功
-            let walletConnected = false;
-            // while (!walletConnected) {
-            //     // 检查钱包是否已经连接
-            //     const connectedWalletButton = await waitForElement('button.inline-flex.items-center.justify-center span.flex.gap-2.items-center.text-xs svg.lucide-wallet', 5000);
-            //     if (connectedWalletButton && connectedWalletButton.closest('span').textContent.includes('0x')) {
-            //         console.log('钱包已经连接，继续执行后续操作');
-            //         walletConnected = true;
-            //     } else {
-            //         console.log('钱包未连接，尝试连接MetaMask');
-            //         // 执行MetaMask连接
-            //         await retryOperation(clickMetaMask);
-            //         // 等待一段时间让钱包连接完成
-            //         await new Promise(resolve => setTimeout(resolve, 13000));
-                    
-            //         // 再次检查钱包连接状态
-            //         const checkWalletButton = await waitForElement('button.inline-flex.items-center.justify-center span.flex.gap-2.items-center.text-xs svg.lucide-wallet', 5000);
-            //         if (checkWalletButton && checkWalletButton.closest('span').textContent.includes('0x')) {
-            //             console.log('钱包连接成功');
-            //             walletConnected = true;
-            //         } else {
-            //             console.log('钱包连接失败，重试中...');
-            //             await new Promise(resolve => setTimeout(resolve, 5000)); // 等待5秒后重试
-            //         }
-            //     }
-            // }
+
+            }
 
             await new Promise(resolve => setTimeout(resolve, 3000));
 
@@ -654,7 +669,7 @@
             const conversationSuccess = await retryOperation(performConversations);
 
             if (conversationSuccess) {
-                window.location.href = 'https://faucet.xion.burnt.com';
+                window.location.href = 'https://www.360.com/';
                 console.log('所有对话完成');
             } else {
                 console.log('对话未全部完成');
@@ -671,6 +686,7 @@
         main();
     }
 })();
+
 
 (function() {
     'use strict';
