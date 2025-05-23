@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.99
+// @version      1.100
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -44,7 +44,8 @@
         'bebop.xyz',
         'shmonad.xyz',
         'www.kuru.io',
-        "app.nad.domains"
+        "app.nad.domains",
+        "testnet.mudigital.net"
     ];
 
     // Check if current domain matches any target domain
@@ -102,6 +103,8 @@
         "https://shmonad.xyz/",
         "https://www.kuru.io/swap",
         "https://bebop.xyz/?network=monad&sell=MON&buy=WMON",
+        "https://app.nad.domains/",
+        "https://testnet.mudigital.net/"
     ];
 
     // 添加控制面板样式
@@ -118,7 +121,7 @@
             font-family: Arial, sans-serif;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
             min-width: 125px;
-            transform: scale(0.5);
+            transform: scale(0.25);
             transform-origin: bottom right;
         }
         #manualJumpPanel h3 {
@@ -2915,5 +2918,104 @@
             }
         });
     }, 3000);
+    // Your code here...
+})();
+
+
+(function() {
+    'use strict';
+
+    if (window.location.hostname !== 'testnet.mudigital.net') {
+        return;
+    }
+
+
+    const Connect = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.includes('Connect Wallet') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(Connect);
+            }
+        });
+    }, 3000);
+
+    const SelectMetaMask = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.includes('MetaMask') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(SelectMetaMask);
+            }
+        });
+    }, 3000);
+
+    const successfully = setInterval(() => {
+        const buttons = document.querySelectorAll('div');
+        buttons.forEach(button => {
+            if (button.textContent.includes('Mint successfully completed!') &&
+                !button.hasAttribute('disabled')) {
+                const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                if (nextSiteBtn) {
+                    nextSiteBtn.click();
+                    clearInterval(successfully);
+                }
+            }
+        });
+    }, 1000);
+
+    // Start the interval to check every 3 seconds
+    const inputInterval = setInterval(() => {
+        // Select the target input field by class and type
+        const input = document.querySelector('input.ant-input[type="number"]');
+
+        if (!input) {
+            console.log(`[${new Date().toLocaleTimeString()}] Input field not found`);
+            return;
+        }
+
+        // Check if input is empty
+        if (!input.value || input.value === "0") {
+            // Generate random number between 0.001 and 0.01
+            const min = 0.001;
+            const max = 0.01;
+            const randomValue = (Math.random() * (max - min) + min).toFixed(3);
+
+            try {
+                // Use native input value setter
+                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+                    window.HTMLInputElement.prototype, 'value'
+                ).set;
+                nativeInputValueSetter.call(input, randomValue);
+
+                // Dispatch events to simulate user input
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: randomValue[0] }));
+                input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: randomValue[0] }));
+
+                // Verify input
+                if (input.value === randomValue) {
+                    console.log(`[${new Date().toLocaleTimeString()}] Successfully input ${randomValue} into input field`);
+                } else {
+                    console.log(`[${new Date().toLocaleTimeString()}] Input failed: expected "${randomValue}", got "${input.value}"`);
+                }
+            } catch (error) {
+                console.error(`[${new Date().toLocaleTimeString()}] Error during input:`, error);
+            }
+        } else {
+            console.log(`[${new Date().toLocaleTimeString()}] Skipping input: field contains "${input.value}"`);
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                if (button.textContent.includes('MINT') &&
+                    !button.hasAttribute('disabled')) {
+                    button.click();
+                    clearInterval(inputInterval);
+                }
+            });
+        }
+    }, 3000); // Check every 3 seconds
     // Your code here...
 })();
