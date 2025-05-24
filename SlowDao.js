@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.101
+// @version      1.102
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -264,7 +264,7 @@
             isBaidu = true;
         }
     }, 3000);
-    
+
     if (window.location.hostname !== 'chat.chainopera.ai') {
         return;
     }
@@ -2587,7 +2587,7 @@
 
     //点击/html/body/div/div[1]/main/main/div/div[4]/div[2]/div/button并且判断文本 Stake
     const StakeButton = setInterval(() => {
-        const xpath = '/html/body/div/div[1]/main/main/div/div[4]/div[2]/div/button';
+        const xpath = '/html/body/div/div[1]/main/section[1]/div[1]/div[4]/div[2]/div/button';
         const result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
         const button = result.singleNodeValue;
         if (button && button.textContent.includes('Stake')) {
@@ -2598,7 +2598,7 @@
     }, 3000);
 
     const StakeButton1 = setInterval(() => {
-        const xpath = '/html/body/div/div[1]/main/main/div/div[4]/div[2]/div/button';
+        const xpath = '/html/body/div/div[1]/main/section[1]/div[1]/div[4]/div[2]/div/button';
         const result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
         const button = result.singleNodeValue;
         if (button && button.textContent.includes('Stake')) {
