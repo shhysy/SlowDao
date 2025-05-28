@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.104
+// @version      1.105
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -66,19 +66,17 @@
 
 (function() {
     'use strict';
-    var falg = true
+    var falg = true;
     var isCompleted = GM_getValue('isCompleted', false);
-    
-    //使用定时器
+
+    // Timer to check for specific URLs
     const timer = setInterval(() => {
         const currentUrl = window.location.href;
-        // 如果当前https://faucet.xion.burnt.com/网站，清除进度条
         if (currentUrl.includes('faucet.xion.burnt.com') || currentUrl.includes('monad.talentum.id')) {
             visitedSites = {};
             GM_setValue('visitedSites', visitedSites);
             GM_setValue('isCompleted', false);
             clearInterval(timer);
-            // 移除控制面板
             const panel = document.getElementById('manualJumpPanel');
             if (panel) {
                 panel.remove();
@@ -87,19 +85,15 @@
         }
     }, 100);
 
-    // 检查当前URL是否在排除列表中
+    // Skip script execution for specific URLs
     const currentUrl = window.location.href;
     if (currentUrl.includes('hcaptcha.com') || currentUrl.includes('cloudflare.com')) {
-        return; // 不执行脚本
+        return;
     }
 
-
-
-
-    // 自定义跳转列表（在此处添加你的目标网址）
+    // Custom site sequence
     const customSiteSequence = [
         "https://app.crystal.exchange",
-        //"https://monad-test.kinza.finance/#/details/MON",
         "https://monad.ambient.finance/",
         "https://shmonad.xyz/",
         "https://www.kuru.io/swap",
@@ -109,7 +103,7 @@
         "https://monad.fantasy.top/shop"
     ];
 
-    // 添加控制面板样式
+    // Add control panel styles using GM_addStyle to avoid CSP issues
     GM_addStyle(`
         #manualJumpPanel {
             position: fixed;
@@ -118,30 +112,29 @@
             z-index: 99999;
             background: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 5px;
-            border-radius: 3px;
+            padding: 10px;
+            border-radius: 5px;
             font-family: Arial, sans-serif;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-            min-width: 125px;
-            transform: scale(0.25);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            min-width: 150px;
+            transform: scale(0.3);
             transform-origin: bottom right;
         }
         #manualJumpPanel h3 {
-            margin: 0 0 5px 0;
-            padding: 0;
-            font-size: 14px;
+            margin: 0 0 8px 0;
+            font-size: 16px;
             color: #4CAF50;
         }
         #manualJumpPanel button {
             background: #4CAF50;
             color: white;
             border: none;
-            padding: 3px 5px;
-            margin: 3px 0;
-            border-radius: 2px;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 3px;
             cursor: pointer;
             width: 100%;
-            text-align: left;
+            font-size: 14px;
         }
         #manualJumpPanel button:hover {
             background: #45a049;
@@ -149,62 +142,63 @@
         #manualJumpPanel .current-site {
             font-size: 12px;
             color: #ccc;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             word-break: break-all;
         }
         #manualJumpPanel .error-notice {
             color: #ff6b6b;
             font-size: 12px;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            display: none; /* Moved inline style here */
         }
         #manualJumpPanel .progress {
             font-size: 12px;
             color: #4CAF50;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
         #manualJumpPanel .close-btn {
-            background: #f44336 !important;
-            margin-top: 5px;
+            background: #f44336;
+        }
+        #manualJumpPanel .close-btn:hover {
+            background: #da190b;
         }
     `);
 
-    // 创建控制面板
+    // Create control panel
     const panel = document.createElement('div');
     panel.id = 'manualJumpPanel';
     panel.innerHTML = `
-        <h3>自定义网站跳转控制</h3>
-        <div class="current-site">当前网址: ${window.location.href}</div>
+        <h3>Custom Site Navigation</h3>
+        <div class="current-site">Current: ${window.location.href}</div>
         <div class="progress" id="progressInfo"></div>
-        <div class="error-notice" id="errorNotice" style="display:none;">页面加载可能出错，但您仍可强制跳转</div>
-        <button id="nextSiteBtn">跳转到下一个网站</button>
-        <button id="closePanelBtn" class="close-btn">关闭控制面板</button>
+        <div class="error-notice" id="errorNotice">Page may have failed to load, but you can still jump</div>
+        <button id="nextSiteBtn">Next Site</button>
+        <button id="closePanelBtn" class="close-btn">Close Panel</button>
     `;
 
-    // 直接添加到body
+    // Append panel to the document
     const root = document.documentElement || document.body;
     root.appendChild(panel);
 
-    // 初始化访问记录
+    // Initialize visited sites
     let visitedSites = GM_getValue('visitedSites', {});
 
-    // 检查当前网站是否在列表中，如果是则标记为已访问
+    // Mark current site as visited if in the sequence
     if (customSiteSequence.includes(currentUrl)) {
         visitedSites[currentUrl] = true;
         GM_setValue('visitedSites', visitedSites);
     }
 
-    // 更新进度显示
+    // Update progress display
     function updateProgress() {
         const totalSites = customSiteSequence.length;
         const visitedCount = Object.keys(visitedSites).length;
         const percent = Math.round((visitedCount / totalSites) * 100);
         document.getElementById('progressInfo').textContent =
-            `进度: ${visitedCount}/${totalSites} (${percent}%)`;
-
-        // 如果进度为100%，直接跳转到faucet.xion.burnt.com
+            `Progress: ${visitedCount}/${totalSites} (${percent}%)`;
+        console.log('当前进度'+percent)
         if (percent === 100 && falg && !isCompleted) {
-            console.log('进度达到100%https://faucet.xion.burnt.com/');
-            // 直接跳转，不重置进度
+            console.log('Progress 100%, redirecting to faucet.xion.burnt.com');
             GM_setValue('isCompleted', true);
             window.location.replace('https://faucet.xion.burnt.com/');
             falg = false;
@@ -213,48 +207,48 @@
 
     updateProgress();
 
-    // 监听可能的错误
+    // Show error notice on page error
     window.addEventListener('error', function() {
-        document.getElementById('errorNotice').style.display = 'block';
+        const errorNotice = document.getElementById('errorNotice');
+        if (errorNotice) {
+            errorNotice.style.display = 'block';
+        }
     });
 
-    // 跳转逻辑，改为随机跳转
+    // Next site button logic (random unvisited site)
     document.getElementById('nextSiteBtn').addEventListener('click', function() {
-        // 获取未访问过的网站列表
         const unvisitedSites = customSiteSequence.filter(site => !visitedSites[site]);
-
-        // 如果所有网站都已访问过，直接跳转到360
         if (unvisitedSites.length === 0) {
-            console.log('所有网站已访问完成，准备跳转到https://faucet.xion.burnt.com/');
+            console.log('All sites visited, redirecting to faucet.xion.burnt.com');
             GM_setValue('isCompleted', true);
             window.location.replace('https://faucet.xion.burnt.com/');
             return;
         }
 
-        // 从未访问过的网站中随机选择一个
         const randomIndex = Math.floor(Math.random() * unvisitedSites.length);
         const randomSite = unvisitedSites[randomIndex];
-
-        // 记录已访问的网站
         visitedSites[randomSite] = true;
         GM_setValue('visitedSites', visitedSites);
-
         updateProgress();
         window.location.href = randomSite;
     });
 
-    // 关闭面板按钮 - 仅移除面板，不重置记录
+    // Close panel button logic
     document.getElementById('closePanelBtn').addEventListener('click', function() {
         panel.remove();
     });
 
-    // 即使页面完全加载失败也确保面板可见
+    // Show error notice after 3 seconds if page fails to load
     setTimeout(() => {
-        document.getElementById('errorNotice').style.display = 'block';
+        const errorNotice = document.getElementById('errorNotice');
+        if (errorNotice) {
+            errorNotice.style.display = 'block';
+        }
     }, 3000);
 
-    console.log('自定义跳转脚本已加载，控制面板将显示');
+    console.log('Custom navigation script loaded, control panel displayed');
 })();
+
 
 (function() {
     'use strict';
@@ -3039,79 +3033,100 @@
 })();
 
 
-
 (function() {
     'use strict';
-    if (window.location.hostname !== 'monad.fantasy.top') {
-        return;
-    }
-    const Register = setInterval(() => {
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-            if (button.textContent.trim().includes('Register and Play for free') &&
-                !button.hasAttribute('disabled')) {
-                button.click();
-                clearInterval(Register);
-            }
-        });
-    }, 5000);
 
-    const loginmethodbutton = setInterval(() => {
-        const buttons = document.querySelectorAll('button.sc-dTUlgT.efwzyw.login-method-button');
-        buttons.forEach(button => {
-            if (button.textContent.trim().includes('Twitter') && !button.hasAttribute('disabled')) {
-                button.click();
-                clearInterval(loginmethodbutton);
-            }
-        });
-    }, 5000);
-    
-    const LearnMore = setInterval(() => {
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-            if (button.textContent.trim().includes('Learn More') && !button.hasAttribute('disabled')) {
-                button.click();
-                clearInterval(LearnMore);
-            }
-        });
-    }, 5000);
-    
-     if (window.location.href.includes('monad.fantasy.top/shop')) {
-         const Claim = setInterval(() => {
-             const buttons = document.querySelectorAll('button');
-             buttons.forEach(button => {
-                 if (button.textContent.trim().includes('Claim') && !button.hasAttribute('disabled')) {
-                     button.click();
-                     setTimeout(() => {
-                        const nextSiteBtn = document.querySelector('#nextSiteBtn');
-                        if (nextSiteBtn) {
-                            nextSiteBtn.click();
-                        }
-                     }, 10000);
-                     clearInterval(Claim);
-                 }
-             });
-         }, 5000);
-     }
-     if (window.location.href.includes('monad.fantasy.top/shop')) {
-        const Claim = setInterval(() => {
-            const buttons = document.querySelectorAll('button.ring-1.ring-inset');
+    // 确保页面加载完成后再执行
+    document.addEventListener('DOMContentLoaded', () => {
+        // 仅在指定域名下运行
+        if (window.location.hostname !== 'monad.fantasy.top') {
+            return;
+        }
+
+
+        // 检测并点击“Register and Play for free”按钮
+        const Register = setInterval(() => {
+            const buttons = document.querySelectorAll('button');
             buttons.forEach(button => {
-                const text = button.textContent.trim();
-                // 检查是否包含“Claim”并且有时间格式（如“23h 40m”）
-                if (text.includes('Claim') && text.match(/(\d+h\s*\d+m)/)) {
-                    console.log(`检测到包含Claim和时间的按钮: ${text}，点击nextSiteBtn`);
-                    const nextSiteBtn = document.querySelector('#nextSiteBtn');
-                    if (nextSiteBtn) {
-                        nextSiteBtn.click();
-                    } else {
-                        console.warn('nextSiteBtn 未找到');
-                    }
-                    clearInterval(Claim); // 找到符合条件的按钮后停止检查
+                if (button.textContent.trim().includes('Register and Play for free') &&
+                    !button.hasAttribute('disabled')) {
+                    button.click();
+                    clearInterval(Register);
                 }
             });
         }, 5000);
-    }
-    // Your
-    //  code here...
+
+        const Continue = setInterval(() => {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                if (button.textContent.trim().includes('Continue') &&
+                    !button.hasAttribute('disabled')) {
+                    button.click();
+                    clearInterval(Continue);
+                }
+            });
+        }, 5000);
+
+
+        // 检测并点击“Twitter”登录按钮
+        const loginmethodbutton = setInterval(() => {
+            const buttons = document.querySelectorAll('button.sc-dTUlgT.efwzyw.login-method-button');
+            buttons.forEach(button => {
+                if (button.textContent.trim().includes('Twitter') && !button.hasAttribute('disabled')) {
+                    button.click();
+                    clearInterval(loginmethodbutton);
+                }
+            });
+        }, 5000);
+
+        // 检测并点击“Learn More”按钮
+        const LearnMore = setInterval(() => {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                if (button.textContent.trim().includes('Learn More') && !button.hasAttribute('disabled')) {
+                    button.click();
+                    clearInterval(LearnMore);
+                }
+            });
+        }, 5000);
+        setInterval(() => {
+            if (window.location.hostname === 'monad.fantasy.top' && window.location.pathname !== '/shop') {
+                window.location.href = 'https://monad.fantasy.top/shop';
+            }
+        }, 10000);
+        // 合并的 shop 页面逻辑
+        if (window.location.href.includes('monad.fantasy.top/shop')) {
+            const Claim = setInterval(() => {
+                const buttons = document.querySelectorAll('button.ring-1.ring-inset');
+                buttons.forEach(button => {
+                    const text = button.textContent.trim();
+                    // 情况1：包含“Claim”且有时间格式（如“Claim in 23h 40m”），点击 nextSiteBtn
+                    if (text.includes('Claim') && text.match(/(\d+h\s*\d+m)/)) {
+                        console.log(`检测到包含Claim和时间的按钮: ${text}，点击nextSiteBtn`);
+                        const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                        if (nextSiteBtn) {
+                            nextSiteBtn.click();
+                        } else {
+                            console.warn('nextSiteBtn 未找到');
+                        }
+                        clearInterval(Claim);
+                    }
+                    // 情况2：包含“Claim”且未禁用，点击 Claim 按钮并随后点击 nextSiteBtn
+                    else if (text.includes('Claim') && !button.hasAttribute('disabled')) {
+                        console.log(`检测到启用Claim按钮: ${text}，点击Claim按钮`);
+                        button.click();
+                        setTimeout(() => {
+                            const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                            if (nextSiteBtn) {
+                                nextSiteBtn.click();
+                            } else {
+                                console.warn('nextSiteBtn 未找到');
+                            }
+                        }, 10000);
+                        clearInterval(Claim);
+                    }
+                });
+            }, 5000);
+        }
+    });
 })();
