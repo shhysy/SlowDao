@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.102
+// @version      1.103
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -45,7 +45,8 @@
         'shmonad.xyz',
         'www.kuru.io',
         "app.nad.domains",
-        "testnet.mudigital.net"
+        "testnet.mudigital.net",
+        "monad.fantasy.top"
     ];
 
     // Check if current domain matches any target domain
@@ -104,7 +105,8 @@
         "https://www.kuru.io/swap",
         "https://bebop.xyz/?network=monad&sell=MON&buy=WMON",
         "https://app.nad.domains/",
-        "https://testnet.mudigital.net/"
+        "https://testnet.mudigital.net/",
+        "https://monad.fantasy.top/shop"
     ];
 
     // 添加控制面板样式
@@ -3033,5 +3035,64 @@
             });
         }
     }, 3000); // Check every 3 seconds
+    // Your code here...
+})();
+
+
+
+(function() {
+    'use strict';
+    if (window.location.hostname !== 'monad.fantasy.top') {
+        return;
+    }
+    const Register = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Register and Play for free') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(Register);
+            }
+        });
+    }, 5000);
+
+    const loginmethodbutton = setInterval(() => {
+        const buttons = document.querySelectorAll('button.sc-dTUlgT.efwzyw.login-method-button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Twitter') && !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(loginmethodbutton);
+            }
+        });
+    }, 5000);
+    
+    const LearnMore = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Learn More') && !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(LearnMore);
+            }
+        });
+    }, 5000);
+    
+     if (window.location.href.includes('monad.fantasy.top/shop')) {
+         const Claim = setInterval(() => {
+             const buttons = document.querySelectorAll('button');
+             buttons.forEach(button => {
+                 if (button.textContent.trim().includes('Claim') && !button.hasAttribute('disabled')) {
+                     button.click();
+                     setTimeout(() => {
+                        const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                        if (nextSiteBtn) {
+                            nextSiteBtn.click();
+                            clearInterval(successfully);
+                        }
+                     }, 10000);
+                     clearInterval(Claim);
+                 }
+             });
+         }, 5000);
+     }
     // Your code here...
 })();
