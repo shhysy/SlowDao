@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.103
+// @version      1.104
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -3086,7 +3086,6 @@
                         const nextSiteBtn = document.querySelector('#nextSiteBtn');
                         if (nextSiteBtn) {
                             nextSiteBtn.click();
-                            clearInterval(successfully);
                         }
                      }, 10000);
                      clearInterval(Claim);
@@ -3094,5 +3093,25 @@
              });
          }, 5000);
      }
-    // Your code here...
+     if (window.location.href.includes('monad.fantasy.top/shop')) {
+        const Claim = setInterval(() => {
+            const buttons = document.querySelectorAll('button.ring-1.ring-inset');
+            buttons.forEach(button => {
+                const text = button.textContent.trim();
+                // 检查是否包含“Claim”并且有时间格式（如“23h 40m”）
+                if (text.includes('Claim') && text.match(/(\d+h\s*\d+m)/)) {
+                    console.log(`检测到包含Claim和时间的按钮: ${text}，点击nextSiteBtn`);
+                    const nextSiteBtn = document.querySelector('#nextSiteBtn');
+                    if (nextSiteBtn) {
+                        nextSiteBtn.click();
+                    } else {
+                        console.warn('nextSiteBtn 未找到');
+                    }
+                    clearInterval(Claim); // 找到符合条件的按钮后停止检查
+                }
+            });
+        }, 5000);
+    }
+    // Your
+    //  code here...
 })();
