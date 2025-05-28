@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.105
+// @version      1.106
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -68,6 +68,10 @@
     'use strict';
     var falg = true;
     var isCompleted = GM_getValue('isCompleted', false);
+
+    if (window.location.hostname == 'klokapp.ai' || window.location.hostname == 'accounts.google.com' || window.location.hostname == 'x.com' || window.location.hostname == 'app.galxe.com') {
+        return;
+    }
 
     // Timer to check for specific URLs
     const timer = setInterval(() => {
@@ -1014,468 +1018,9 @@
     // Your code here...
 })();
 
-//银河注册及登录
-(function() {
-    'use strict';
-
-    if (window.location.hostname !== 'app.galxe.com') {
-        return;
-    }
-
-    // Random nickname generator
-    function getRandomNickname() {
-        const adjectives = ['Cool', 'Swift', 'Bright', 'Mystic'];
-        const nouns = ['Star', 'Wolf', 'Shadow', 'Flame'];
-        const randomAdj = adjectives[Math.floor(Math.random() * adjectives.length)];
-        const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
-        const randomNumber = Math.floor(Math.random() * 100);
-        return `${randomAdj}${randomNoun}${randomNumber}`;
-    }
-
-    // Main interval to handle all actions
-    const mainInterval = setInterval(() => {
-        // Step 1: Fill the username input
-        const input = document.querySelector('input[placeholder="Enter username"]');
-        if (input && !input.value) {
-            const randomNickname = getRandomNickname();
-            try {
-                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-                    window.HTMLInputElement.prototype, 'value'
-                ).set;
-                nativeInputValueSetter.call(input, randomNickname);
-                input.dispatchEvent(new Event('input', { bubbles: true }));
-                input.dispatchEvent(new Event('change', { bubbles: true }));
-                input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Enter' }));
-                input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: 'Enter' }));
-
-                if (input.value === randomNickname) {
-                    console.log(`[${new Date().toLocaleTimeString()}] Successfully input ${randomNickname}`);
-                } else {
-                    console.log(`[${new Date().toLocaleTimeString()}] Input failed: expected "${randomNickname}", got "${input.value}"`);
-                    return;
-                }
-            } catch (error) {
-                console.error(`[${new Date().toLocaleTimeString()}] Error during input:`, error);
-                return;
-            }
-        }
-
-        // Step 2: Click the terms checkbox
-        const checkbox = document.querySelector('button[role="checkbox"][id="terms1"]');
-        if (checkbox && checkbox.getAttribute('aria-checked') === 'false') {
-            try {
-                checkbox.click();
-                if (checkbox.getAttribute('aria-checked') === 'true') {
-                    console.log(`[${new Date().toLocaleTimeString()}] Checkbox clicked and checked`);
-                } else {
-                    console.log(`[${new Date().toLocaleTimeString()}] Checkbox click failed`);
-                    return;
-                }
-            } catch (error) {
-                console.error(`[${new Date().toLocaleTimeString()}] Error during checkbox click:`, error);
-                return;
-            }
-        }
-
-        // Step 3: Click the "Daily Visit" buttons
-        let allDailyButtonsClicked = true;
-
-        // Daily Visit the Sahara AI Blog
-        const blogButton = Array.from(document.querySelectorAll('div')).find(button =>
-            button.textContent.trim().includes('Daily Visit the Sahara AI Blog') && !button.hasAttribute('disabled')
-        );
-        if (blogButton) {
-            try {
-                blogButton.click();
-                console.log(`[${new Date().toLocaleTimeString()}] Clicked 'Daily Visit the Sahara AI Blog' button`);
-            } catch (error) {
-                console.error(`[${new Date().toLocaleTimeString()}] Error clicking Blog button:`, error);
-                allDailyButtonsClicked = false;
-            }
-        }
-
-        // Daily Visit the Sahara AI Twitter
-        const twitterButton = Array.from(document.querySelectorAll('div')).find(button =>
-            button.textContent.trim().includes('Daily Visit the Sahara AI Twitter') && !button.hasAttribute('disabled')
-        );
-        if (twitterButton) {
-            try {
-                twitterButton.click();
-                console.log(`[${new Date().toLocaleTimeString()}] Clicked 'Daily Visit the Sahara AI Twitter' button`);
-            } catch (error) {
-                console.error(`[${new Date().toLocaleTimeString()}] Error clicking Twitter button:`, error);
-                allDailyButtonsClicked = false;
-            }
-        }
-
-        // Step 4: Click the two SVG buttons if all previous actions are complete
-        if (!input?.value || !checkbox || checkbox.getAttribute('aria-checked') !== 'true' || blogButton || twitterButton) {
-            console.log(`[${new Date().toLocaleTimeString()}] Waiting for previous actions to complete`);
-            return;
-        }
-
-        const svgButtons = document.querySelectorAll('button[data-state="closed"]');
-        if (svgButtons.length === 0) {
-            console.log(`[${new Date().toLocaleTimeString()}] SVG buttons not found`);
-            return;
-        }
-
-        svgButtons.forEach((button, index) => {
-            if (!button.hasAttribute('disabled')) {
-                try {
-                    button.click();
-                    console.log(`[${new Date().toLocaleTimeString()}] Clicked SVG button ${index + 1}`);
-                } catch (error) {
-                    console.error(`[${new Date().toLocaleTimeString()}] Error clicking SVG button ${index + 1}:`, error);
-                }
-            } else {
-                console.log(`[${new Date().toLocaleTimeString()}] SVG button ${index + 1} is disabled`);
-            }
-        });
-
-        // Stop the interval if all actions are complete
-        if (allDailyButtonsClicked && svgButtons.length === 2) {
-            console.log(`[${new Date().toLocaleTimeString()}] All actions completed, stopping interval`);
-            location.reload();
-        }
-    }, 5000);
-
-    const successCheckInterval = setInterval(() => {
-        // Select all buttons matching the criteria
-        const successButtons = document.querySelectorAll('button[id="radix-«r2f»"][aria-haspopup="menu"][data-state="closed"] .text-success');
-    
-        if (successButtons.length >= 2) {
-            console.log(`[${new Date().toLocaleTimeString()}] Success: ${successButtons.length} success buttons detected!`);
-            window.close();
-        } 
-    }, 5000); // Check every 5 seconds
-    
-
-
-    function getRandomNickname() {
-        const adjectives = ['Cool', 'Swift', 'Bright', 'Mystic', 'Silent', 'Vivid', 'Bold', 'Cosmic'];
-        const nouns = ['Star', 'Wolf', 'Shadow', 'Flame', 'River', 'Sky', 'Knight', 'Echo'];
-        const randomAdj = adjectives[Math.floor(Math.random() * adjectives.length)];
-        const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
-        const randomNumber = Math.floor(Math.random() * 100);
-        return `${randomAdj}${randomNoun}${randomNumber}`;
-    }
-
-
-    const Sign = setInterval(() => {
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-        if (button.textContent.trim().includes('Sign up') &&
-            !button.hasAttribute('disabled')) {
-                const input = document.querySelector('input[placeholder="Enter username"]');
-
-                if (!input) {
-                    console.log(`[${new Date().toLocaleTimeString()}] Input field not found`);
-                    return;
-                }
-                if (input.value != '') {
-                    button.click();
-                    clearInterval(Sign);
-                }
-            }
-        });
-    }, 5000);
-
-    const interval = setInterval(() => {
-        // Select the checkbox button by its attributes
-        const checkbox = document.querySelector('button[role="checkbox"][id="terms1"]');
-    
-        if (!checkbox) {
-            console.log(`[${new Date().toLocaleTimeString()}] Checkbox button not found`);
-            return;
-        }
-    
-        try {
-            // Check if the checkbox is not already checked
-            if (checkbox.getAttribute('aria-checked') === 'false') {
-                // Simulate a click on the checkbox
-                checkbox.click();
-                console.log(`[${new Date().toLocaleTimeString()}] Successfully clicked checkbox with id "terms1"`);
-    
-                // Verify if the checkbox is now checked
-                if (checkbox.getAttribute('aria-checked') === 'true') {
-                    console.log(`[${new Date().toLocaleTimeString()}] Checkbox is now checked`);
-                    clearInterval(interval); // Stop the interval once clicked
-                } else {
-                    console.log(`[${new Date().toLocaleTimeString()}] Checkbox click failed: still unchecked`);
-                }
-            } else {
-                console.log(`[${new Date().toLocaleTimeString()}] Checkbox is already checked`);
-                clearInterval(interval); // Stop if already checked
-            }
-        } catch (error) {
-            console.error(`[${new Date().toLocaleTimeString()}] Error during checkbox click:`, error);
-        }
-    }, 3000); // Check every 3 seconds
 
 
 
-
-    const inputInterval = setInterval(() => {
-        // Select the target input field by placeholder (based on your HTML snippet)
-        const input = document.querySelector('input[placeholder="Enter username"]');
-    
-        if (!input) {
-            console.log(`[${new Date().toLocaleTimeString()}] Input field not found`);
-            return;
-        }
-    
-        // Check if input is empty
-        if (!input.value) {
-            const randomNickname = getRandomNickname(); // Use the nickname generator
-    
-            try {
-                // Use native input value setter
-                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-                    window.HTMLInputElement.prototype, 'value'
-                ).set;
-                nativeInputValueSetter.call(input, randomNickname);
-    
-                // Dispatch events to simulate user input
-                input.dispatchEvent(new Event('input', { bubbles: true }));
-                input.dispatchEvent(new Event('change', { bubbles: true }));
-                input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Enter' }));
-                input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: 'Enter' }));
-    
-                // Verify input
-                if (input.value === randomNickname) {
-                    console.log(`[${new Date().toLocaleTimeString()}] Successfully input ${randomNickname} into input field`);
-                    clearInterval(inputInterval);
-                } else {
-                    console.log(`[${new Date().toLocaleTimeString()}] Input failed: expected "${randomNickname}", got "${input.value}"`);
-                }
-            } catch (error) {
-                console.error(`[${new Date().toLocaleTimeString()}] Error during input:`, error);
-            }
-        } else {
-            console.log(`[${new Date().toLocaleTimeString()}] Skipping input: field contains "${input.value}"`);
-        }
-    }, 3000);
-
-    //<button class="inline-flex text-info items-center justify-center whitespace-nowrap font-semibold transition-colors disabled:pointer-events-none cursor-pointer bg-primary hover:bg-primary-lighten1 active:bg-primary disabled:bg-component-btnDisable disabled:text-info-disable h-[36px] rounded-[6px] py-2 text-xs leading-[18px] px-[24px]" type="button">Log in</button>
-    const Login = setInterval(() => {
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-            if (button.textContent.trim().includes('Log in') &&
-                !button.hasAttribute('disabled')) {
-                button.click();
-                clearInterval(Login);
-            }
-        });
-    }, 5000);
-
-    const Continuetoccess = setInterval(() => {
-        const buttons = document.querySelectorAll('div');
-        buttons.forEach(button => {
-            if (button.textContent.trim().includes('Continue to Access') &&
-                !button.hasAttribute('disabled')) {
-                button.click();
-                clearInterval(Continuetoccess);
-            }
-        });
-    }, 1000);
-
-
-
-    const Confirm = setInterval(() => {
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-            if (button.textContent.trim().includes('Confirm') &&
-                !button.hasAttribute('disabled')) {
-                button.click();
-                clearInterval(Confirm);
-            }
-        });
-    }, 5000);
-
-    
-
-    const MetaMask = setInterval(() => {
-        const buttons = document.querySelectorAll('div');
-        buttons.forEach(button => {
-            if (button.textContent.trim().includes('MetaMask') &&
-                !button.hasAttribute('disabled')) {
-                button.click();
-                clearInterval(MetaMask);
-            }
-        });
-    }, 5000);
-    // Your code here...
-})();
-
-
-(function() {
-    'use strict';
-    if (window.location.hostname !== 'legends.saharalabs.ai') {
-        return;
-    }
-    //<a data-v-b0d2019a="" class="login-button" style="width: 175px; height: 64px; font-size: 24px;"><img data-v-b0d2019a="" alt="" src="/assets/logo-BeXmBXM3.png" style="width: 70px; height: 37px; position: absolute; right: 0px; bottom: 0px;"><span data-v-b0d2019a="" style="z-index: 1;"> Sign In </span></a>
-    const Login = setInterval(() => {
-        const buttons = document.querySelectorAll('a');
-        buttons.forEach(button => {
-            if (button.textContent.trim().includes('Sign In') &&
-                !button.hasAttribute('disabled')) {
-                button.click(); 
-                clearInterval(Login);
-            }
-        });
-    }, 2000);
-
-    const MetaMask = setInterval(() => {
-        const buttons = document.querySelectorAll('div');
-        buttons.forEach(button => {
-            if (button.textContent.trim().includes('MetaMask') &&
-                !button.hasAttribute('disabled')) {
-                button.click();
-                clearInterval(MetaMask);
-            }
-        });
-    }, 5000);
-    
-    const claim = setInterval(() => {
-        const buttons = document.querySelectorAll('div');
-        buttons.forEach(button => {
-            if (button.textContent.trim().includes(' claim ') &&
-                !button.hasAttribute('disabled')) {
-                button.click();
-                clearInterval(claim);
-            }
-        });
-    }, 5000);
-
-    setInterval(() => {
-        // Select all divs with class 'task-button-plus' and text 'claim'
-        const claimButtons = Array.from(document.querySelectorAll('div.task-button-plus')).filter(div => 
-            div.textContent.trim().toLowerCase() === 'claim'
-        );
-    
-        if (claimButtons.length > 0) {
-            claimButtons.forEach((button, index) => {
-                try {
-                    // Try native click
-                    button.click();
-                    console.log(`[${new Date().toLocaleTimeString()}] Successfully clicked 'claim' button ${index + 1} (native click)`);
-                } catch (error) {
-                    console.warn(`[${new Date().toLocaleTimeString()}] Native click failed for 'claim' button ${index + 1}, trying MouseEvent:`, error);
-                    // Fallback to MouseEvent
-                    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
-                    button.dispatchEvent(clickEvent);
-                    console.log(`[${new Date().toLocaleTimeString()}] Successfully clicked 'claim' button ${index + 1} (MouseEvent)`);
-                }
-            });
-        } else {
-            console.log(`[${new Date().toLocaleTimeString()}] No 'claim' buttons found, checking again...`);
-            // Debug: Log all task-button-plus elements
-            const allTaskButtons = document.querySelectorAll('div.task-button-plus');
-            if (allTaskButtons.length > 0) {
-                console.log(`[${new Date().toLocaleTimeString()}] Found ${allTaskButtons.length} 'task-button-plus' elements:`);
-                allTaskButtons.forEach((div, index) => {
-                    console.log(`Div ${index + 1}:`, div.outerHTML.slice(0, 100) + (div.outerHTML.length > 100 ? '...' : ''));
-                });
-            }
-        }
-    }, 3000); // Check every 3 seconds
-
-
-    const clickInterval1 = setInterval(() => {
-        // Select the target div element
-        const targetDiv = document.querySelector('div.map-point.map-animal[data-v-2499a22b][data-v-b0d2019a]');
-    
-        if (targetDiv) {
-            try {
-                targetDiv.click();
-                console.log(`[${new Date().toLocaleTimeString()}] Successfully clicked the map-animal div`);
-                clearInterval(clickInterval1); // Stop the interval after clicking
-            } catch (error) {
-                console.error(`[${new Date().toLocaleTimeString()}] Error clicking the div:`, error);
-            }
-        } else {
-            console.log(`[${new Date().toLocaleTimeString()}] Map-animal div not found, checking again...`);
-        }
-    }, 15000);
-
-    //<div data-v-a13dd1c6="" class="task-info"><div data-v-a13dd1c6="" class="task-simple" style="height: 72px;"><div data-v-a13dd1c6="" style="flex-grow: 1;"><div data-v-a13dd1c6="" class="task-title"><img data-v-a13dd1c6="" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABFlJREFUWAmVV8tOE2EYLRcV5CJyk0u5CQov5FpfQ1fdEgyQ0jId2tJIXPUB3PICbl2zkBgSokChF9wcc+abr98/UzAzJE3Yzcn5zu3P/IX/voXSVRslxH7nTfifGvC3Ojh620Flo4PD120crLVRWWnDXwbK2SaqC03483cov7rF8UwDhSng8CWwNwHkx4HiKHAyAuwOn6E29AO5p0BuEEB/hn9tlM5iH3aBNO57AJTX2igEAFrIZ5s4WACKcwgA5Gca+DwNVCaB2sRv5McvsT0G7AQAgPwzA5DrB9BHAO4He/6PAvDXhYHCSgvFJReAMEAA/vQNdievAga+RhggAIQM1FEfADJJARTCExCAy0A5C1QDBgSANwsUpghAGZAT+M95AqA2BNS7J0gMoIHDzQ5Kb0wDyoBp4Bb8uGjgJjwBNXCJ6livBk4HkY4BirC40YG/DnirFKGcoJxtwVu8Q3FOT0AGKEKeQDVwgZORnz0M8AQpNHDTZYAn8FYVAEUoLtgPXeBPKwBl4MIRIU9wGrgglQaUAdpQNGAiNA3wBC4DgIjQAKgNeYKULhAGTIQtHC+1oCKszQHe7C3yXQAqQrGhiPAMOUeEBJDABR0cblKEUQB6AskBaoAAhIEvU8wB14bGQDwHEgKQJKQI7QRMQs0BTUJxAXOAAGphEqoL6kESag4kPoFF8UMAaENJQrpAASgDf+C/AKpjxgBzwH8iUZzwBJaEYkMRoXRBlAG6QDSgOSA2JAPxIEopwgaYhG4OaBCJBuI2vA7KiCdgDxRHmQO/AhAWxXKCBBowBpiErgvYBd4iT6AiFAYoQrahlJEA2AmDiAAkiut4l6YL3Dp2k9Bb1CR0bRg/ARkA6sNWRoEOunXc04BuQzZwsNUJTsA9YAyICx4TYTyKlQG3jBJGsbhA21AHiauBanCCO4gIWccaxRQhXaBlJAzwBPx4wiRkEDEHJIiOw0XEM+wvaxJqDlADcQBsQ7Uhk9AdJLqI/nsCEyFdkA/3QDQJCUCTkJNM9wBzQOpYF5Ge4HQwsQgf1gABSBe4bShBpJuQIaSb0O0CN4gS1LF0geWATjIRIW1oo9SSUET4cB0rgPpA4hNIED3sAk6yJvbmRYTerG5C5oAA2A41oDbUPZAiii0JxQVXwSoyEdoisk1obVgfFREagO/SB8lywEQYfRfoIhIG9F1AF4gICUDKSN8FBPDNScKEi8hE6JZR9F3g2lBWsbwLdBH15gAfJilOIEnILlAbRtuQDxMdpWSAZWQMWA5YEKUAYAxUNq57ojgfvAusDeMPE7WhdYEbRIkmmWmAJ7BFZKNU2lAY4LvAXkYSROoCfZioDZHmaaZdwDLi49Q0YDa0RSSTjI/T+CqmCHNPIy545GWs8XxuZVQMTiAPk8IKwrdh3AUyy1WEUkZqQ76OOckUQPgw8T488kJu3OPoo51AbVheYw4IAJnl6gImob4LbJCICG0RsQ11kmX6/gGGPFgGjrejcAAAAABJRU5ErkJggg==" style="width: 16px; height: 16px;"><div data-v-a13dd1c6="" class="task-name" style="font-size: 18px;">Visit the Sahara AI blog</div><!----><!----></div><!----><!----></div></div><!----></div
-    const VisittheSaharaAIblog = setInterval(() => {
-        const buttons = document.querySelectorAll('div');
-        buttons.forEach(button => {
-            if (button.textContent.trim().includes('Visit the Sahara AI blog') &&
-                !button.hasAttribute('disabled')) {
-                button.click();
-                clearInterval(VisittheSaharaAIblog);
-            }
-        });
-    }, 5000);
-
-    const clickInterval = setInterval(() => {
-        // Select all potential SVG elements
-        const targetSvgs = [
-            ...document.querySelectorAll('svg[data-v-a13dd1c6][width="26"][height="26"] path[fill="#F7FF98"]'),
-            ...document.querySelectorAll('svg path[fill="#F7FF98"]'),
-            ...document.querySelectorAll('svg path[d*="M19.3333 13.3333"]'),
-            document.evaluate('/html/body/div[3]/div/div[2]/div/div[1]/div/div/div/div[2]/div[2]/div/div[4]/div[1]/div[2]/div[2]/div/svg', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue,
-            document.evaluate('/html/body/div[2]/div/div[2]/div/div[1]/div/div/div/div[2]/div[2]/div/div[4]/div[2]/div[2]/div[2]/div/svg', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
-        ].filter((svg, index, self) => svg && self.indexOf(svg) === index); // Remove duplicates and null
-    
-        if (targetSvgs.length >= 2) {
-            try {
-                targetSvgs.slice(0, 2).forEach((svg, index) => {
-                    const clickableElement = svg.tagName.toLowerCase() === 'svg' ? svg : svg.closest('svg');
-                    if (!clickableElement) {
-                        console.error(`[${new Date().toLocaleTimeString()}] No valid SVG element for clicking at index ${index + 1}`);
-                        return;
-                    }
-    
-                    // Try native click
-                    try {
-                        clickableElement.click();
-                        console.log(`[${new Date().toLocaleTimeString()}] Successfully clicked SVG button ${index + 1} (native click)`);
-                    } catch (error) {
-                        console.warn(`[${new Date().toLocaleTimeString()}] Native click failed for SVG ${index + 1}, trying MouseEvent:`, error);
-                        // Fallback to MouseEvent
-                        const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
-                        clickableElement.dispatchEvent(clickEvent);
-                        console.log(`[${new Date().toLocaleTimeString()}] Successfully clicked SVG button ${index + 1} (MouseEvent)`);
-                    }
-                });
-    
-                console.log(`[${new Date().toLocaleTimeString()}] All required SVG buttons (2) clicked successfully`);
-                clearInterval(clickInterval); // Stop after clicking both
-                clearInterval(timeoutInterval); // Stop timeout
-            } catch (error) {
-                console.error(`[${new Date().toLocaleTimeString()}] Error clicking SVGs:`, error);
-            }
-        } else {
-            // Debug: Log all SVGs for inspection
-            const allSvgs = document.querySelectorAll('svg');
-            console.log(`[${new Date().toLocaleTimeString()}] Found ${targetSvgs.length} of 2 required SVG buttons. Total SVGs on page: ${allSvgs.length}. Checking again...`);
-            allSvgs.forEach((svg, index) => {
-                console.log(`SVG ${index + 1}:`, svg.outerHTML.slice(0, 100) + (svg.outerHTML.length > 100 ? '...' : ''));
-            });
-        }
-    }, 5000); // Check every 5 seconds
-    
-    // Timeout mechanism
-    let attempts = 0;
-    const maxAttempts = 12; // 60 seconds
-    const timeoutInterval = setInterval(() => {
-        attempts++;
-        if (attempts >= maxAttempts) {
-            console.log(`[${new Date().toLocaleTimeString()}] Timeout: Only ${document.querySelectorAll('svg path[fill="#F7FF98"]').length} of 2 SVG buttons found after ${maxAttempts} attempts`);
-            clearInterval(clickInterval);
-            clearInterval(timeoutInterval);
-        }
-    }, 5000);
-
-    
-
-
-    // Your code here...
-})();
 
 
 //soso
@@ -3129,4 +2674,557 @@
             }, 5000);
         }
     });
+})();
+
+
+(function() {
+    'use strict';
+
+    setInterval(() => {
+        if (window.location.hostname == 'saharalabs.ai' || window.location.hostname == 'ask.galxe.com') {
+            window.close();
+        }
+    }, 2000);
+
+    setInterval(() => {
+        if (window.location.href == 'https://x.com/SaharaLabsAI') {
+            window.close();
+        }
+    }, 10000);
+
+    if (window.location.hostname !== 'app.galxe.com') {
+        return;
+    }
+
+    const Blog = setInterval(() => {
+        const buttons = document.querySelectorAll('div');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Daily Visit the Sahara AI Blog') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                setTimeout(() => {
+                    location.reload();
+                }, 30000);
+                clearInterval(Blog);
+                //30秒后刷新页面
+            }
+        });
+    }, 2000);
+
+
+    const DailyVisittheSaharaAITwitter = setInterval(() => {
+        const buttons = document.querySelectorAll('div');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Daily Visit the Sahara AI Twitter') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(DailyVisittheSaharaAITwitter);
+            }
+        });
+    }, 2000);
+
+    setInterval(() => {
+        const buttons = document.querySelectorAll('div');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Daily Visit the Sahara AI Blog') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+            }
+        });
+    }, 20000);
+
+
+    setInterval(() => {
+        const buttons = document.querySelectorAll('div');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Daily Visit the Sahara AI Twitter') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+            }
+        });
+    }, 20000);
+
+    const successCheckInterval = setInterval(() => {
+        // Select buttons with aria-haspopup="menu" and data-state="closed" containing .text-success
+        const successButtons = document.querySelectorAll('button[aria-haspopup="menu"][data-state="closed"] .text-success');
+
+        console.log(`[${new Date().toLocaleTimeString()}] Found ${successButtons.length} success buttons.`);
+
+        if (successButtons.length >= 2) {
+            console.log(`[${new Date().toLocaleTimeString()}] Success: ${successButtons.length} success buttons detected!`);
+            clearInterval(successCheckInterval); // Stop the interval
+            try {
+                window.close(); // Attempt to close the window
+            } catch (e) {
+                console.warn('Window.close() failed:', e.message);
+                alert('Success condition met! Please close the window manually.');
+                // Optional: window.location.href = 'about:blank';
+            }
+        }
+    }, 1000); // Check every 1 second for dynamic elements
+
+
+    // Your code here...
+})();
+
+
+(function() {
+    'use strict';
+    if (window.location.hostname !== 'legends.saharalabs.ai') {
+        return;
+    }
+
+    setTimeout(() => {
+        location.reload
+    }, 60000); // Check every 5 seconds
+
+
+
+    setInterval(() => {
+        // Select all potential SVG elements
+        const targetSvgs = [
+            ...document.querySelectorAll('svg[data-v-a13dd1c6][width="26"][height="26"] path[fill="#F7FF98"]'),
+            ...document.querySelectorAll('svg path[fill="#F7FF98"]'),
+            ...document.querySelectorAll('svg path[d*="M19.3333 13.3333"]'),
+            document.evaluate('/html/body/div[3]/div/div[2]/div/div[1]/div/div/div/div[2]/div[2]/div/div[4]/div[1]/div[2]/div[2]/div/svg', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue,
+            document.evaluate('/html/body/div[2]/div/div[2]/div/div[1]/div/div/div/div[2]/div[2]/div/div[4]/div[2]/div[2]/div[2]/div/svg', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+        ].filter((svg, index, self) => svg && self.indexOf(svg) === index); // Remove duplicates and null
+
+        if (targetSvgs.length >= 2) {
+            try {
+                targetSvgs.slice(0, 2).forEach((svg, index) => {
+                    const clickableElement = svg.tagName.toLowerCase() === 'svg' ? svg : svg.closest('svg');
+                    if (!clickableElement) {
+                        console.error(`[${new Date().toLocaleTimeString()}] No valid SVG element for clicking at index ${index + 1}`);
+                        return;
+                    }
+
+                    // Try native click
+                    try {
+                        clickableElement.click();
+                        console.log(`[${new Date().toLocaleTimeString()}] Successfully clicked SVG button ${index + 1} (native click)`);
+                    } catch (error) {
+                        console.warn(`[${new Date().toLocaleTimeString()}] Native click failed for SVG ${index + 1}, trying MouseEvent:`, error);
+                        // Fallback to MouseEvent
+                        const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+                        clickableElement.dispatchEvent(clickEvent);
+                        console.log(`[${new Date().toLocaleTimeString()}] Successfully clicked SVG button ${index + 1} (MouseEvent)`);
+                    }
+                });
+                console.log(`[${new Date().toLocaleTimeString()}] All required SVG buttons (2) clicked successfully`);
+            } catch (error) {
+                console.error(`[${new Date().toLocaleTimeString()}] Error clicking SVGs:`, error);
+            }
+        } else {
+            // Debug: Log all SVGs for inspection
+            const allSvgs = document.querySelectorAll('svg');
+            console.log(`[${new Date().toLocaleTimeString()}] Found ${targetSvgs.length} of 2 required SVG buttons. Total SVGs on page: ${allSvgs.length}. Checking again...`);
+            allSvgs.forEach((svg, index) => {
+                console.log(`SVG ${index + 1}:`, svg.outerHTML.slice(0, 100) + (svg.outerHTML.length > 100 ? '...' : ''));
+            });
+        }
+    }, 5000); // Check every 5 seconds
+
+    //<a data-v-b0d2019a="" class="login-button" style="width: 175px; height: 64px; font-size: 24px;"><img data-v-b0d2019a="" alt="" src="/assets/logo-BeXmBXM3.png" style="width: 70px; height: 37px; position: absolute; right: 0px; bottom: 0px;"><span data-v-b0d2019a="" style="z-index: 1;"> Sign In </span></a>
+    const Login = setInterval(() => {
+        const buttons = document.querySelectorAll('a');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Sign In') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(Login);
+            }
+        });
+    }, 2000);
+
+    const MetaMask = setInterval(() => {
+        const buttons = document.querySelectorAll('div');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('MetaMask') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(MetaMask);
+            }
+        });
+    }, 5000);
+
+    const claim = setInterval(() => {
+        const buttons = document.querySelectorAll('div');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes(' claim ') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(claim);
+            }
+        });
+    }, 5000);
+
+    const claimtoto = setInterval(() => {
+        const buttons = document.querySelectorAll('div.task-button'); // Select only divs with class="task-button"
+        let matchCount = 0;
+
+        buttons.forEach(button => {
+            if (button.textContent.trim() === 'claimed' && !button.hasAttribute('disabled')) {
+                matchCount++;
+            }
+        });
+
+        if (matchCount > 2) { // Exactly 3 matches
+            setTimeout(() => {
+                location.href = 'https://chat.chainopera.ai/login';
+            }, 15000);
+            clearInterval(claimtoto);
+        }
+    }, 5000);
+
+    setInterval(() => {
+        // Select all divs with class 'task-button-plus' and text 'claim'
+        const claimButtons = Array.from(document.querySelectorAll('div.task-button-plus')).filter(div =>
+            div.textContent.trim().toLowerCase() === 'claim'
+        );
+
+        if (claimButtons.length > 0) {
+            claimButtons.forEach((button, index) => {
+                try {
+                    // Try native click
+                    button.click();
+                    console.log(`[${new Date().toLocaleTimeString()}] Successfully clicked 'claim' button ${index + 1} (native click)`);
+                } catch (error) {
+                    console.warn(`[${new Date().toLocaleTimeString()}] Native click failed for 'claim' button ${index + 1}, trying MouseEvent:`, error);
+                    // Fallback to MouseEvent
+                    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+                    button.dispatchEvent(clickEvent);
+                    console.log(`[${new Date().toLocaleTimeString()}] Successfully clicked 'claim' button ${index + 1} (MouseEvent)`);
+                }
+            });
+        } else {
+            console.log(`[${new Date().toLocaleTimeString()}] No 'claim' buttons found, checking again...`);
+            // Debug: Log all task-button-plus elements
+            const allTaskButtons = document.querySelectorAll('div.task-button-plus');
+            if (allTaskButtons.length > 0) {
+                console.log(`[${new Date().toLocaleTimeString()}] Found ${allTaskButtons.length} 'task-button-plus' elements:`);
+                allTaskButtons.forEach((div, index) => {
+                    console.log(`Div ${index + 1}:`, div.outerHTML.slice(0, 100) + (div.outerHTML.length > 100 ? '...' : ''));
+                });
+            }
+        }
+    }, 3000); // Check every 3 seconds
+
+
+    const clickInterval1 = setInterval(() => {
+        // Select the target div element
+        const targetDiv = document.querySelector('div.map-point.map-animal[data-v-2499a22b][data-v-b0d2019a]');
+
+        if (targetDiv) {
+            try {
+                targetDiv.click();
+                console.log(`[${new Date().toLocaleTimeString()}] Successfully clicked the map-animal div`);
+            } catch (error) {
+                console.error(`[${new Date().toLocaleTimeString()}] Error clicking the div:`, error);
+            }
+        } else {
+            console.log(`[${new Date().toLocaleTimeString()}] Map-animal div not found, checking again...`);
+        }
+    }, 15000);
+
+    //<div data-v-a13dd1c6="" class="task-info"><div data-v-a13dd1c6="" class="task-simple" style="height: 72px;"><div data-v-a13dd1c6="" style="flex-grow: 1;"><div data-v-a13dd1c6="" class="task-title"><img data-v-a13dd1c6="" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABFlJREFUWAmVV8tOE2EYLRcV5CJyk0u5CQov5FpfQ1fdEgyQ0jId2tJIXPUB3PICbl2zkBgSokChF9wcc+abr98/UzAzJE3Yzcn5zu3P/IX/voXSVRslxH7nTfifGvC3Ojh620Flo4PD120crLVRWWnDXwbK2SaqC03483cov7rF8UwDhSng8CWwNwHkx4HiKHAyAuwOn6E29AO5p0BuEEB/hn9tlM5iH3aBNO57AJTX2igEAFrIZ5s4WACKcwgA5Gca+DwNVCaB2sRv5McvsT0G7AQAgPwzA5DrB9BHAO4He/6PAvDXhYHCSgvFJReAMEAA/vQNdievAga+RhggAIQM1FEfADJJARTCExCAy0A5C1QDBgSANwsUpghAGZAT+M95AqA2BNS7J0gMoIHDzQ5Kb0wDyoBp4Bb8uGjgJjwBNXCJ6livBk4HkY4BirC40YG/DnirFKGcoJxtwVu8Q3FOT0AGKEKeQDVwgZORnz0M8AQpNHDTZYAn8FYVAEUoLtgPXeBPKwBl4MIRIU9wGrgglQaUAdpQNGAiNA3wBC4DgIjQAKgNeYKULhAGTIQtHC+1oCKszQHe7C3yXQAqQrGhiPAMOUeEBJDABR0cblKEUQB6AskBaoAAhIEvU8wB14bGQDwHEgKQJKQI7QRMQs0BTUJxAXOAAGphEqoL6kESag4kPoFF8UMAaENJQrpAASgDf+C/AKpjxgBzwH8iUZzwBJaEYkMRoXRBlAG6QDSgOSA2JAPxIEopwgaYhG4OaBCJBuI2vA7KiCdgDxRHmQO/AhAWxXKCBBowBpiErgvYBd4iT6AiFAYoQrahlJEA2AmDiAAkiut4l6YL3Dp2k9Bb1CR0bRg/ARkA6sNWRoEOunXc04BuQzZwsNUJTsA9YAyICx4TYTyKlQG3jBJGsbhA21AHiauBanCCO4gIWccaxRQhXaBlJAzwBPx4wiRkEDEHJIiOw0XEM+wvaxJqDlADcQBsQ7Uhk9AdJLqI/nsCEyFdkA/3QDQJCUCTkJNM9wBzQOpYF5Ge4HQwsQgf1gABSBe4bShBpJuQIaSb0O0CN4gS1LF0geWATjIRIW1oo9SSUET4cB0rgPpA4hNIED3sAk6yJvbmRYTerG5C5oAA2A41oDbUPZAiii0JxQVXwSoyEdoisk1obVgfFREagO/SB8lywEQYfRfoIhIG9F1AF4gICUDKSN8FBPDNScKEi8hE6JZR9F3g2lBWsbwLdBH15gAfJilOIEnILlAbRtuQDxMdpWSAZWQMWA5YEKUAYAxUNq57ojgfvAusDeMPE7WhdYEbRIkmmWmAJ7BFZKNU2lAY4LvAXkYSROoCfZioDZHmaaZdwDLi49Q0YDa0RSSTjI/T+CqmCHNPIy545GWs8XxuZVQMTiAPk8IKwrdh3AUyy1WEUkZqQ76OOckUQPgw8T488kJu3OPoo51AbVheYw4IAJnl6gImob4LbJCICG0RsQ11kmX6/gGGPFgGjrejcAAAAABJRU5ErkJggg==" style="width: 16px; height: 16px;"><div data-v-a13dd1c6="" class="task-name" style="font-size: 18px;">Visit the Sahara AI blog</div><!----><!----></div><!----><!----></div></div><!----></div
+    // 启动定时器，每秒检查一次
+    const timerId = setInterval(() => {
+        // 查找所有 class="task-info" 元素
+        const taskInfoElements = document.querySelectorAll('.task-info');
+
+        // 检查是否至少有 9 个元素
+        if (taskInfoElements.length >= 9) {
+            // 点击第一个元素
+            if (taskInfoElements[0]) {
+                taskInfoElements[0].click();
+                console.log('Clicked first task-info element');
+            }
+            // 清除定时器
+            clearInterval(timerId);
+            console.log('Timer cleared');
+        } else {
+            console.log(`Condition not met: Found ${taskInfoElements.length} task-info elements`);
+        }
+    }, 1000); // 每 1000ms (1秒) 检查一次
+
+
+
+
+    // Timeout mechanism
+    let attempts = 0;
+    const maxAttempts = 12; // 60 seconds
+    const timeoutInterval = setInterval(() => {
+        attempts++;
+        if (attempts >= maxAttempts) {
+            console.log(`[${new Date().toLocaleTimeString()}] Timeout: Only ${document.querySelectorAll('svg path[fill="#F7FF98"]').length} of 2 SVG buttons found after ${maxAttempts} attempts`);
+            clearInterval(clickInterval);
+            clearInterval(timeoutInterval);
+        }
+    }, 5000);
+    // Your code here...
+})();
+
+
+//银河注册及登录
+(function() {
+    'use strict';
+
+    if (window.location.hostname !== 'app.galxe.com') {
+        return;
+    }
+
+    // Random nickname generator
+    function getRandomNickname() {
+        const adjectives = ['Cool', 'Swift', 'Bright', 'Mystic'];
+        const nouns = ['Star', 'Wolf', 'Shadow', 'Flame'];
+        const randomAdj = adjectives[Math.floor(Math.random() * adjectives.length)];
+        const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+        const randomNumber = Math.floor(Math.random() * 100);
+        return `${randomAdj}${randomNoun}${randomNumber}`;
+    }
+
+    // Main interval to handle all actions
+    const mainInterval = setInterval(() => {
+        // Step 1: Fill the username input
+        const input = document.querySelector('input[placeholder="Enter username"]');
+        if (input && !input.value) {
+            const randomNickname = getRandomNickname();
+            try {
+                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+                    window.HTMLInputElement.prototype, 'value'
+                ).set;
+                nativeInputValueSetter.call(input, randomNickname);
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Enter' }));
+                input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: 'Enter' }));
+
+                if (input.value === randomNickname) {
+                    console.log(`[${new Date().toLocaleTimeString()}] Successfully input ${randomNickname}`);
+                } else {
+                    console.log(`[${new Date().toLocaleTimeString()}] Input failed: expected "${randomNickname}", got "${input.value}"`);
+                    return;
+                }
+            } catch (error) {
+                console.error(`[${new Date().toLocaleTimeString()}] Error during input:`, error);
+                return;
+            }
+        }
+
+        // Step 2: Click the terms checkbox
+        const checkbox = document.querySelector('button[role="checkbox"][id="terms1"]');
+        if (checkbox && checkbox.getAttribute('aria-checked') === 'false') {
+            try {
+                checkbox.click();
+                if (checkbox.getAttribute('aria-checked') === 'true') {
+                    console.log(`[${new Date().toLocaleTimeString()}] Checkbox clicked and checked`);
+                } else {
+                    console.log(`[${new Date().toLocaleTimeString()}] Checkbox click failed`);
+                    return;
+                }
+            } catch (error) {
+                console.error(`[${new Date().toLocaleTimeString()}] Error during checkbox click:`, error);
+                return;
+            }
+        }
+
+
+        // Step 4: Click the two SVG buttons if all previous actions are complete
+        if (!input?.value || !checkbox || checkbox.getAttribute('aria-checked') !== 'true' || blogButton || twitterButton) {
+            console.log(`[${new Date().toLocaleTimeString()}] Waiting for previous actions to complete`);
+            return;
+        }
+
+        const svgButtons = document.querySelectorAll('button[data-state="closed"]');
+        if (svgButtons.length === 0) {
+            console.log(`[${new Date().toLocaleTimeString()}] SVG buttons not found`);
+            return;
+        }
+
+        svgButtons.forEach((button, index) => {
+            if (!button.hasAttribute('disabled')) {
+                try {
+                    button.click();
+                    console.log(`[${new Date().toLocaleTimeString()}] Clicked SVG button ${index + 1}`);
+                } catch (error) {
+                    console.error(`[${new Date().toLocaleTimeString()}] Error clicking SVG button ${index + 1}:`, error);
+                }
+            } else {
+                console.log(`[${new Date().toLocaleTimeString()}] SVG button ${index + 1} is disabled`);
+            }
+        });
+
+        // Stop the interval if all actions are complete
+        if (allDailyButtonsClicked && svgButtons.length === 2) {
+            console.log(`[${new Date().toLocaleTimeString()}] All actions completed, stopping interval`);
+            location.reload();
+        }
+    }, 5000);
+
+
+
+    function getRandomNickname() {
+        const adjectives = ['Cool', 'Swift', 'Bright', 'Mystic', 'Silent', 'Vivid', 'Bold', 'Cosmic'];
+        const nouns = ['Star', 'Wolf', 'Shadow', 'Flame', 'River', 'Sky', 'Knight', 'Echo'];
+        const randomAdj = adjectives[Math.floor(Math.random() * adjectives.length)];
+        const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+        const randomNumber = Math.floor(Math.random() * 100);
+        return `${randomAdj}${randomNoun}${randomNumber}`;
+    }
+
+
+    const Sign = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+        if (button.textContent.trim().includes('Sign up') &&
+            !button.hasAttribute('disabled')) {
+                const input = document.querySelector('input[placeholder="Enter username"]');
+
+                if (!input) {
+                    console.log(`[${new Date().toLocaleTimeString()}] Input field not found`);
+                    return;
+                }
+                if (input.value != '') {
+                    button.click();
+                    clearInterval(Sign);
+                }
+            }
+        });
+    }, 5000);
+
+    const interval = setInterval(() => {
+        // Select the checkbox button by its attributes
+        const checkbox = document.querySelector('button[role="checkbox"][id="terms1"]');
+
+        if (!checkbox) {
+            console.log(`[${new Date().toLocaleTimeString()}] Checkbox button not found`);
+            return;
+        }
+
+        try {
+            // Check if the checkbox is not already checked
+            if (checkbox.getAttribute('aria-checked') === 'false') {
+                // Simulate a click on the checkbox
+                checkbox.click();
+                console.log(`[${new Date().toLocaleTimeString()}] Successfully clicked checkbox with id "terms1"`);
+
+                // Verify if the checkbox is now checked
+                if (checkbox.getAttribute('aria-checked') === 'true') {
+                    console.log(`[${new Date().toLocaleTimeString()}] Checkbox is now checked`);
+                    clearInterval(interval); // Stop the interval once clicked
+                } else {
+                    console.log(`[${new Date().toLocaleTimeString()}] Checkbox click failed: still unchecked`);
+                }
+            } else {
+                console.log(`[${new Date().toLocaleTimeString()}] Checkbox is already checked`);
+                clearInterval(interval); // Stop if already checked
+            }
+        } catch (error) {
+            console.error(`[${new Date().toLocaleTimeString()}] Error during checkbox click:`, error);
+        }
+    }, 3000); // Check every 3 seconds
+
+
+
+
+    const inputInterval = setInterval(() => {
+        // Select the target input field by placeholder (based on your HTML snippet)
+        const input = document.querySelector('input[placeholder="Enter username"]');
+
+        if (!input) {
+            console.log(`[${new Date().toLocaleTimeString()}] Input field not found`);
+            return;
+        }
+
+        // Check if input is empty
+        if (!input.value) {
+            const randomNickname = getRandomNickname(); // Use the nickname generator
+
+            try {
+                // Use native input value setter
+                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+                    window.HTMLInputElement.prototype, 'value'
+                ).set;
+                nativeInputValueSetter.call(input, randomNickname);
+
+                // Dispatch events to simulate user input
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Enter' }));
+                input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: 'Enter' }));
+
+                // Verify input
+                if (input.value === randomNickname) {
+                    console.log(`[${new Date().toLocaleTimeString()}] Successfully input ${randomNickname} into input field`);
+                    clearInterval(inputInterval);
+                } else {
+                    console.log(`[${new Date().toLocaleTimeString()}] Input failed: expected "${randomNickname}", got "${input.value}"`);
+                }
+            } catch (error) {
+                console.error(`[${new Date().toLocaleTimeString()}] Error during input:`, error);
+            }
+        } else {
+            console.log(`[${new Date().toLocaleTimeString()}] Skipping input: field contains "${input.value}"`);
+        }
+    }, 3000);
+
+    //<button class="inline-flex text-info items-center justify-center whitespace-nowrap font-semibold transition-colors disabled:pointer-events-none cursor-pointer bg-primary hover:bg-primary-lighten1 active:bg-primary disabled:bg-component-btnDisable disabled:text-info-disable h-[36px] rounded-[6px] py-2 text-xs leading-[18px] px-[24px]" type="button">Log in</button>
+    const Login = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Log in') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(Login);
+            }
+        });
+    }, 5000);
+
+    const Continuetoccess = setInterval(() => {
+        const buttons = document.querySelectorAll('div');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Continue to Access') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(Continuetoccess);
+            }
+        });
+    }, 1000);
+
+    const successCheckInterval = setInterval(() => {
+        // Select all buttons matching the criteria
+        const successButtons = document.querySelectorAll('button[id="radix-«r1o»"][aria-haspopup="menu"][data-state="closed"] .text-success');
+
+        if (successButtons.length >= 2) {
+            console.log(`[${new Date().toLocaleTimeString()}] Success: ${successButtons.length} success buttons detected!`);
+            window.close();
+            clearInterval(successCheckInterval); // Stop the interval after closing
+        }
+    }, 5000); // Check every 5 seconds
+
+    const Confirm = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Confirm') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(Confirm);
+            }
+        });
+    }, 5000);
+
+
+
+    const MetaMask = setInterval(() => {
+        const buttons = document.querySelectorAll('div');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('MetaMask') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(MetaMask);
+            }
+        });
+    }, 5000);
+    // Your code here...
 })();
