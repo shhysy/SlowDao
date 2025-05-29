@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.111
+// @version      1.112
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -854,7 +854,7 @@
                             }, 2000);
                         }
                     }
-                    const followButton = allElements.find(el =>['Follow', 'Authorize app', 'Repost', 'Post', 'Like'].some(text => el.innerHTML.trim().includes(text)) && el.tagName === 'BUTTON');
+                    const followButton = allElements.find(el =>['Follow', 'Authorize app', 'Repost', 'Post', 'Like','Izinkan aplikasi'].some(text => el.innerHTML.trim().includes(text)) && el.tagName === 'BUTTON');
                     if (followButton) {
                         setTimeout(() => {
                             followButton.click();
@@ -872,7 +872,7 @@
                         }, 2000);
                     }
 
-                    const specificInput = allElements.find(input => input.tagName === 'INPUT' && input.type === 'submit' && input.value === "Authorize app");
+                    const specificInput = allElements.find(input => input.tagName === 'INPUT' && input.type === 'submit' && input.value === "Authorize app" && input.value === "Izinkan aplikasi");
                     if (specificInput) {
                         setTimeout(() => {
                             specificInput.click();
