@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.106
+// @version      1.107
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -2638,7 +2638,7 @@
             if (window.location.hostname === 'monad.fantasy.top' && window.location.pathname !== '/shop') {
                 window.location.href = 'https://monad.fantasy.top/shop';
             }
-        }, 10000);
+        }, 20000);
         // 合并的 shop 页面逻辑
         if (window.location.href.includes('monad.fantasy.top/shop')) {
             const Claim = setInterval(() => {
