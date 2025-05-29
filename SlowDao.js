@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.112
+// @version      1.113
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -46,7 +46,7 @@
         'www.kuru.io',
         "app.nad.domains",
         "testnet.mudigital.net",
-        "monad.fantasy.top"
+        // "monad.fantasy.top"
     ];
 
     // Check if current domain matches any target domain
@@ -104,7 +104,7 @@
         "https://bebop.xyz/?network=monad&sell=MON&buy=WMON",
         "https://app.nad.domains/",
         "https://testnet.mudigital.net/",
-        "https://monad.fantasy.top/shop"
+        // "https://monad.fantasy.top/shop"
     ];
 
     // Add control panel styles using GM_addStyle to avoid CSP issues
