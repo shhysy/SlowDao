@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.108
+// @version      1.109
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -2674,9 +2674,11 @@
             const Confirm = setInterval(() => {
                 const buttons = document.querySelectorAll('button');
                 buttons.forEach(button => {
-                    if (button.textContent.trim()=='Confirm' && !button.hasAttribute('disabled')) {
+                    if (button.textContent.trim().includes('Confirm') &&
+                        !button.hasAttribute('disabled')) {
                         button.click();
                         clearInterval(Confirm);
+                    }
                 });
             }, 5000);
 
