@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.114
+// @version      1.115
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -1029,29 +1029,6 @@
         return;
     }
 
-    const MetaMask = setInterval(() => {
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-            if (button.textContent.trim().includes('MetaMask') &&
-                !button.hasAttribute('disabled')) {
-                button.click();
-                clearInterval(MetaMask);
-            }
-        });
-    }, 5000);
-    
-
-    const Wallet = setInterval(() => {
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-            if (button.textContent.trim().includes('Wallet') &&
-                !button.hasAttribute('disabled')) {
-                button.click();
-                clearInterval(Wallet);
-            }
-        });
-    }, 5000);
-
     var checkP = true;
     var f =1
     // 检测文本语言的函数
@@ -1130,7 +1107,7 @@
     setInterval(() => {
         clickButtons();
         if (allDisabled>=5) {
-            window.location.href = 'https://faucet.xion.burnt.com/';
+            window.location.href = 'https://node.securitylabs.xyz/';
         }
     }, 3000);
 
@@ -1144,8 +1121,10 @@
                 console.log("Buttons found, attempting to click...");
                 for (let i = 0; i < buttons.length; i++) {
                     if (!buttons[i].disabled) {
-                        buttons[i].click();
-                        allDisabled = 0; // Reset
+                        if(i!=0){
+                            buttons[i].click();
+                            allDisabled = 0; // Reset
+                        }
                     } else {
                         allDisabled++;
                         console.log(`Button ${i} is disabled.`);
@@ -1198,7 +1177,6 @@
 
                             const googleInterval = setInterval(() => {
                                 // 使用更具体的选择器
-                                
                                 const buttons = document.querySelectorAll('button.MuiButtonBase-root.MuiButton-root');
 
                                 buttons.forEach(button => {
@@ -1206,21 +1184,19 @@
                                     const buttonText = button.textContent.trim();
                                     if (button &&
                                         !button.hasAttribute('disabled') &&
-                                        buttonText.includes('钱包') || buttonText.includes('Wallet')) {
+                                        buttonText.includes('Google')) {
                                         console.log('找到Google按钮，尝试点击:', button); // 调试信息
                                         button.click();
                                         clearInterval(googleInterval);
                                         return;
                                     }
                                 });
-                            
+
                                 // 如果没找到，输出调试信息
                                 if (buttons.length === 0) {
                                     console.log('未找到任何匹配的按钮');
                                 }
                             }, 1000); // 缩短到1秒检查一次
-
-
 
                             if (isLoginButton) {
                                 button.click();
@@ -1237,6 +1213,7 @@
         }
     }
 })();
+
 
 
 
