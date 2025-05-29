@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.113
+// @version      1.114
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -843,7 +843,7 @@
                         }
                     }
 
-                    const authorizeSpan = allElements.find(span => span.innerHTML.trim() === 'Authorize app' && span.tagName === 'SPAN');
+                    const authorizeSpan = allElements.find(span => span.innerHTML.trim() === 'Authorize app' || span.innerHTML.trim() === 'Autorizar aplicativo' || span.innerHTML.trim() === 'Izinkan aplikasi' && span.tagName === 'SPAN');
                     if (authorizeSpan) {
                         const button = authorizeSpan.closest('button');
                         if (button) {
@@ -2606,9 +2606,20 @@
             const buttons = document.querySelectorAll('button');
             buttons.forEach(button => {
                 const buttonText = button.textContent.trim();
-                if ((buttonText.includes('Continue') || buttonText.includes("Got it, let's go")) && !button.hasAttribute('disabled')) {
+                if (buttonText.includes('Continue') && !button.hasAttribute('disabled')) {
                     button.click();
                     clearInterval(Continue); // 点击后清除定时器
+                }
+            });
+        }, 5000);
+
+        const go = setInterval(() => {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                const buttonText = button.textContent.trim();
+                if ((buttonText.includes("Got it, let's go")) && !button.hasAttribute('disabled')) {
+                    button.click();
+                    clearInterval(go); // 点击后清除定时器
                 }
             });
         }, 5000);
@@ -2675,10 +2686,10 @@
                 }
             });
         }, 5000);
-    
+
         // 合并的 shop 页面逻辑
-        if (window.location.href.includes('monad.fantasy.top/shop')) {
-            
+
+
             const Retweet = setInterval(() => {
                 const buttons = document.querySelectorAll('button');
                 buttons.forEach(button => {
@@ -2711,48 +2722,36 @@
             }, 5000);
 
             const Claim = setInterval(() => {
-                const buttons = document.querySelectorAll('button.ring-1.ring-inset');
+                const buttons = document.querySelectorAll('button');
+                let foundContinue = false;
                 buttons.forEach(button => {
-                    const text = button.textContent.trim();
-                    // 情况1：包含“Claim”且有时间格式（如“Claim in 23h 40m”），点击 nextSiteBtn
-                    if (text.includes('Claim') && text.match(/(\d+h\s*\d+m)/)) {
-                        console.log(`检测到包含Claim和时间的按钮: ${text}，点击nextSiteBtn`);
-                        const nextSiteBtn = document.querySelector('#nextSiteBtn');
-                        if (nextSiteBtn) {
-                            nextSiteBtn.click();
-                        } else {
-                            console.warn('nextSiteBtn 未找到');
-                        }
-                        clearInterval(Claim);
-                    }
-                    // 情况2：包含“Claim”且未禁用，点击 Claim 按钮并随后点击 nextSiteBtn
-                    else if (text=='Claim' && !button.hasAttribute('disabled')) {
-                        console.log(`检测到启用Claim按钮: ${text}，点击Claim按钮`);
-                        button.click();
-                        setTimeout(() => {
-                            const nextSiteBtn = document.querySelector('#nextSiteBtn');
-                            if (nextSiteBtn) {
-                                nextSiteBtn.click();
-                            } else {
-                                console.warn('nextSiteBtn 未找到');
-                            }
-                        }, 10000);
-                        clearInterval(Claim);
-                    }else{
-                        const buttons = document.querySelectorAll('button');
-                        buttons.forEach(button => {
-                            if (button.textContent.trim().includes('Claim') &&
-                                !button.hasAttribute('disabled')) {
-                                button.click();
-                            }
-                        });
+                    const buttonText = button.textContent.trim();
+                    if (buttonText.includes('Continue') || buttonText.includes('Close') || button.textContent.trim().includes('Claim 100 $fMON') || (buttonText.includes("Got it, let's go")) && !button.hasAttribute('disabled')) {
+                        foundContinue = true;
                     }
                 });
+                
+                if (!foundContinue) {
+                    const buttons = document.querySelectorAll('button.ring-1.ring-inset');
+                    buttons.forEach(button => {
+                        const text = button.textContent.trim();
+                        // 情况1：包含"Claim"且有时间格式（如"Claim in 23h 40m"），点击 nextSiteBtn
+                        if (text.includes('Claim') && text.match(/(\d+h\s*\d+m)/)) {
+                            console.log(`检测到包含Claim和时间的按钮: ${text}，点击nextSiteBtn`);
+                            window.location.href='https://stake.apr.io/'
+                            clearInterval(Claim);
+                        }
+                        // 情况2：包含"Claim"且未禁用，点击 Claim 按钮并随后点击 nextSiteBtn
+                        else if (text=='Claim' && !button.hasAttribute('disabled')) {
+                            console.log(`检测到启用Claim按钮: ${text}，点击Claim按钮`);
+                            button.click();
+                        }
+                    });
+                }
             }, 5000);
-        }
+        
     });
 })();
-
 
 (function() {
     'use strict';
