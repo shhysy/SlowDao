@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.110
+// @version      1.111
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -2589,6 +2589,7 @@
         }
 
 
+
         // 检测并点击“Register and Play for free”按钮
         const Register = setInterval(() => {
             const buttons = document.querySelectorAll('button');
@@ -2604,9 +2605,10 @@
         const Continue = setInterval(() => {
             const buttons = document.querySelectorAll('button');
             buttons.forEach(button => {
-                if (button.textContent.trim().includes('Continue') &&
-                    !button.hasAttribute('disabled')) {
+                const buttonText = button.textContent.trim();
+                if ((buttonText.includes('Continue') || buttonText.includes("Got it, let's go")) && !button.hasAttribute('disabled')) {
                     button.click();
+                    clearInterval(Continue); // 点击后清除定时器
                 }
             });
         }, 5000);
@@ -2655,8 +2657,13 @@
         }, 5000);
 
         setInterval(() => {
-            if (window.location.hostname === 'monad.fantasy.top' && window.location.pathname !== '/shop' && window.location.pathname !== '/login') {
-                window.location.href = 'https://monad.fantasy.top/shop';
+            if (window.location.href === 'https://monad.fantasy.top/' && window.location.pathname !== '/shop' && window.location.pathname !== '/login') {
+                const xpath = '//*[@id="sidebar"]/div[3]/div[1]/div[3]';
+                const result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+                const button = result.singleNodeValue;
+                if (button && button.textContent.trim().includes('Shop') && !button.hasAttribute('disabled')) {
+                    button.click();
+                }
             }
         }, 20000);
 
@@ -2671,7 +2678,7 @@
     
         // 合并的 shop 页面逻辑
         if (window.location.href.includes('monad.fantasy.top/shop')) {
-
+            
             const Retweet = setInterval(() => {
                 const buttons = document.querySelectorAll('button');
                 buttons.forEach(button => {
@@ -2731,6 +2738,14 @@
                             }
                         }, 10000);
                         clearInterval(Claim);
+                    }else{
+                        const buttons = document.querySelectorAll('button');
+                        buttons.forEach(button => {
+                            if (button.textContent.trim().includes('Claim') &&
+                                !button.hasAttribute('disabled')) {
+                                button.click();
+                            }
+                        });
                     }
                 });
             }, 5000);
