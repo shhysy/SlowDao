@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.109
+// @version      1.110
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -2633,6 +2633,27 @@
                 }
             });
         }, 5000);
+
+        const Claim100 = setInterval(() => {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                if (button.textContent.trim().includes('Claim 100 $fMON') && !button.hasAttribute('disabled')) {
+                    button.click();
+                    clearInterval(Claim100);
+                }
+            });
+        }, 5000);
+
+        const Close = setInterval(() => {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                if (button.textContent.trim().includes('Close') && !button.hasAttribute('disabled')) {
+                    button.click();
+                    clearInterval(Close);
+                }
+            });
+        }, 5000);
+
         setInterval(() => {
             if (window.location.hostname === 'monad.fantasy.top' && window.location.pathname !== '/shop' && window.location.pathname !== '/login') {
                 window.location.href = 'https://monad.fantasy.top/shop';
