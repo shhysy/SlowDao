@@ -2607,7 +2607,6 @@
                 if (button.textContent.trim().includes('Continue') &&
                     !button.hasAttribute('disabled')) {
                     button.click();
-                    clearInterval(Continue);
                 }
             });
         }, 5000);
@@ -2635,7 +2634,7 @@
             });
         }, 5000);
         setInterval(() => {
-            if (window.location.hostname === 'monad.fantasy.top' && window.location.pathname !== '/shop') {
+            if (window.location.hostname === 'monad.fantasy.top' && window.location.pathname !== '/shop' && window.location.pathname !== '/login') {
                 window.location.href = 'https://monad.fantasy.top/shop';
             }
         }, 20000);
