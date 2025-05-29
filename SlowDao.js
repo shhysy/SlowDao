@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.107
+// @version      1.108
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -2638,8 +2638,48 @@
                 window.location.href = 'https://monad.fantasy.top/shop';
             }
         }, 20000);
+
+        setInterval(() => {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                if (button.textContent.trim()=='Claim' && !button.hasAttribute('disabled') && window.location.pathname !== '/shop') {
+                    button.click();
+                }
+            });
+        }, 5000);
+    
         // 合并的 shop 页面逻辑
         if (window.location.href.includes('monad.fantasy.top/shop')) {
+
+            const Retweet = setInterval(() => {
+                const buttons = document.querySelectorAll('button');
+                buttons.forEach(button => {
+                    if (button.textContent.trim().includes('Retweet') && !button.hasAttribute('disabled')) {
+                        button.click();
+                        clearInterval(Retweet);
+                    }
+                });
+            }, 5000);
+
+            const Verify = setInterval(() => {
+                const buttons = document.querySelectorAll('button');
+                buttons.forEach(button => {
+                    if (button.textContent.trim().includes('Verify') && !button.hasAttribute('disabled')) {
+                        button.click();
+                        clearInterval(Verify);
+                    }
+                });
+            }, 5000);
+
+            const Confirm = setInterval(() => {
+                const buttons = document.querySelectorAll('button');
+                buttons.forEach(button => {
+                    if (button.textContent.trim()=='Confirm' && !button.hasAttribute('disabled')) {
+                        button.click();
+                        clearInterval(Confirm);
+                });
+            }, 5000);
+
             const Claim = setInterval(() => {
                 const buttons = document.querySelectorAll('button.ring-1.ring-inset');
                 buttons.forEach(button => {
@@ -2656,7 +2696,7 @@
                         clearInterval(Claim);
                     }
                     // 情况2：包含“Claim”且未禁用，点击 Claim 按钮并随后点击 nextSiteBtn
-                    else if (text.includes('Claim') && !button.hasAttribute('disabled')) {
+                    else if (text=='Claim' && !button.hasAttribute('disabled')) {
                         console.log(`检测到启用Claim按钮: ${text}，点击Claim按钮`);
                         button.click();
                         setTimeout(() => {
