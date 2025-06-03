@@ -260,8 +260,8 @@
     var isBaidu = false;
     setInterval(() => {
         if (window.location.hostname == 'www.baidu.com' && !isBaidu) {
-            window.location.href = 'https://chat.chainopera.ai/login';
-            //window.location.href = 'https://sosovalue.com/ja/exp';
+            //window.location.href = 'https://chat.chainopera.ai/login';
+            window.location.href = 'https://sosovalue.com/ja/exp';
             isBaidu = true;
         }
     }, 3000);
