@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.117
+// @version      1.118
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -1185,7 +1185,7 @@
                                     const buttonText = button.textContent.trim();
                                     if (button &&
                                         !button.hasAttribute('disabled') &&
-                                        buttonText.includes('Google')) {
+                                        buttonText.includes('Wallet')) {
                                         console.log('找到Google按钮，尝试点击:', button); // 调试信息
                                         button.click();
                                         clearInterval(googleInterval);
