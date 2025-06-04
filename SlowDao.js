@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.123
+// @version      1.124
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -1030,6 +1030,11 @@
     if (window.location.hostname !== 'sosovalue.com') {
         return;
     }
+
+
+    setTimeout(() => {
+        window.location.href='https://faucet.xion.burnt.com/'
+    }, 30000);
 
     var checkP = true;
     var f =1
