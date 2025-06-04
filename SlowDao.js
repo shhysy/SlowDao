@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.120
+// @version      1.121
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -261,7 +261,8 @@
     setInterval(() => {
         if (window.location.hostname == 'www.baidu.com' && !isBaidu) {
             //window.location.href = 'https://chat.chainopera.ai/login';
-            window.location.href = 'https://sosovalue.com/ja/exp';
+            //window.location.href = 'https://sosovalue.com/ja/exp';
+            window.location.href = 'https://faucet.xion.burnt.com/';
             isBaidu = true;
         }
     }, 3000);
@@ -3277,6 +3278,69 @@
                 !button.hasAttribute('disabled')) {
                 button.click();
                 clearInterval(MetaMask);
+            }
+        });
+    }, 5000);
+    // Your code here...
+})();
+
+
+(function() {
+    'use strict';
+    if (window.location.hostname !== 'speedrun.enso.build') {
+        return;
+    }
+    const Check = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Check my bonus') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(Check);
+            }
+        });
+    }, 5000);
+
+    const Connect = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Connect wallet') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(Connect);
+            }
+        });
+    }, 5000);
+    //METAMASK
+    const MetaMask = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('MetaMask') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(MetaMask);
+            }
+        });
+    }, 5000);
+
+    const Signmessage = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Sign message') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(Signmessage);
+            }
+        });
+    }, 5000);
+
+    const ConnectZealy = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Connect Zealy') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(ConnectZealy);
             }
         });
     }, 5000);
