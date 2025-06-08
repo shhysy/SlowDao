@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.126
+// @version      1.127
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -1113,7 +1113,7 @@
     let MaxValue = 0;
     setInterval(() => {
         clickButtons();
-        if (allDisabled>=5 && window.location.href=='https://sosovalue.com/exp') {
+        if (allDisabled>=5 && window.location.href=='https://sosovalue.com/exp' || window.location.href=='https://sosovalue.com/zh/exp') {
             window.location.href = 'https://faucet.xion.burnt.com/';
         }
     }, 3000);
