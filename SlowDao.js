@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.128
+// @version      1.129
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -69,7 +69,7 @@
     var falg = true;
     var isCompleted = GM_getValue('isCompleted', false);
 
-    if (window.location.hostname == 'klokapp.ai' || window.location.hostname == 'accounts.google.com' || window.location.hostname == 'x.com' || window.location.hostname == 'app.galxe.com') {
+    if (window.location.hostname == 'klokapp.ai' || window.location.hostname == 'web.telegram.org' || window.location.hostname == 'accounts.google.com' || window.location.hostname == 'x.com' || window.location.hostname == 'app.galxe.com') {
         return;
     }
 
@@ -3473,4 +3473,25 @@
 
     });
 
+})();
+
+
+
+(function() {
+    'use strict';
+    if (window.location.hostname != 'web.telegram.org') {
+        return;
+    }
+    
+    const PLAY = setInterval(() => {
+    const buttons = document.querySelectorAll('new-message-bot-commands.is-view');
+    buttons.forEach(button => {
+        if (button.textContent.trim().includes('PLAY') &&
+            !button.hasAttribute('disabled')) {
+            button.click();
+            clearInterval(PLAY);
+        }
+    });
+}, 5000);
+    // Your code here...
 })();
