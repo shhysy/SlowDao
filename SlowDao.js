@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.130
+// @version      1.131
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -69,7 +69,7 @@
     var falg = true;
     var isCompleted = GM_getValue('isCompleted', false);
 
-    if (window.location.hostname == 'klokapp.ai' || window.location.hostname == 'web.telegram.org' || window.location.hostname == 'accounts.google.com' || window.location.hostname == 'x.com' || window.location.hostname == 'app.galxe.com') {
+    if (document.title == 'Banana Rush' || window.location.hostname == 'klokapp.ai' || window.location.hostname == 'web.telegram.org' || window.location.hostname == 'accounts.google.com' || window.location.hostname == 'x.com' || window.location.hostname == 'app.galxe.com') {
         return;
     }
 
