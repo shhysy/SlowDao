@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.133
+// @version      1.134
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -1033,7 +1033,7 @@
 
 
     setTimeout(() => {
-        window.location.href='https://faucet.xion.burnt.com/'
+        window.location.href='https://app.olab.xyz/login'
     }, 300000);
 
     var checkP = true;
@@ -1114,7 +1114,7 @@
     setInterval(() => {
         clickButtons();
         if (allDisabled>=5) {
-            window.location.href = 'https://faucet.xion.burnt.com/';
+            window.location.href = 'https://app.olab.xyz/login';
         }
     }, 3000);
 
@@ -3364,7 +3364,7 @@
         const OKXWallet = setInterval(() => {
             const buttons = document.querySelectorAll('button.chakra-button.css-1azazgw');
             buttons.forEach(button => {
-                if (button.textContent.trim().includes('OKX Wallet') &&
+                if (button.textContent.trim().includes('MetaMask') &&
                     !button.hasAttribute('disabled')) {
                     button.click();
                     clearInterval(OKXWallet);
