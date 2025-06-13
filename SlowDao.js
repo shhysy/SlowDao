@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.134
+// @version      1.135
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -1033,7 +1033,7 @@
 
 
     setTimeout(() => {
-        window.location.href='https://app.olab.xyz/login'
+        window.location.href='https://faucet.xion.burnt.com/'
     }, 300000);
 
     var checkP = true;
@@ -1114,7 +1114,7 @@
     setInterval(() => {
         clickButtons();
         if (allDisabled>=5) {
-            window.location.href = 'https://app.olab.xyz/login';
+            window.location.href = 'https://faucet.xion.burnt.com/';
         }
     }, 3000);
 
@@ -3359,6 +3359,7 @@
     if (window.location.hostname != 'app.olab.xyz') {
         return
     }
+    
     //等待页面加载完成运行
     document.addEventListener('DOMContentLoaded', () => {
         const OKXWallet = setInterval(() => {
@@ -3494,15 +3495,16 @@
         });
     }, 5000);
 
-    // const Log = setInterval(() => {
-    //     const buttons = document.querySelectorAll('button');
-    //     buttons.forEach(button => {
-    //         if (button.textContent.trim().includes('Log in by phone Number') &&
-    //             !button.hasAttribute('disabled')) {
-    //             button.click();
-    //             clearInterval(Log);
-    //         }
-    //     });
-    // }, 5000);
+    //<button class="popup-button btn primary rp"><div class="c-ripple"></div><span class="i18n">Launch</span></button>
+    const Launch = setInterval(() => {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.textContent.trim().includes('Launch') &&
+                !button.hasAttribute('disabled')) {
+                button.click();
+                clearInterval(Launch);
+            }
+        });
+    }, 5000);
     // Your code here...
 })();
