@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.135
+// @version      1.136
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -1269,7 +1269,7 @@
     }
 
     const MetaMask = setInterval(() => {
-        const btn = findButtonInShadow(document, 'MetaMask');
+        const btn = findButtonInShadow(document, 'OKX Wallet');
         if (btn) {
             console.log('找到可点击的按钮，正在点击...');
             btn.click();
@@ -1484,7 +1484,7 @@
     const MetaMask = setInterval(() => {
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
-            if (button.textContent.includes('MetaMask') &&
+            if (button.textContent.includes('OKX Wallet') &&
                 !button.hasAttribute('disabled')) {
                 console.log('找到可点击的按钮，正在点击...');
                 button.click();
@@ -1535,7 +1535,7 @@
 
                 walletButtons.forEach(button => {
                     const walletName = button.querySelector('span.wallet-name');
-                    if (walletName && walletName.textContent.trim() === "MetaMask") {
+                    if (walletName && walletName.textContent.trim() === "OKX Wallet") {
                         metaMaskButton = button;
                     }
                 });
@@ -1689,7 +1689,7 @@
     const MetaMask = setInterval(() => {
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
-            if (button.textContent.includes('MetaMask') &&
+            if (button.textContent.includes('OKX Wallet') &&
                 !button.hasAttribute('disabled')) {
                 button.click();
                 clearInterval(MetaMask);
@@ -1893,7 +1893,7 @@
             const buttons = root.querySelectorAll ? root.querySelectorAll('button') : [];
         for (const button of buttons) {
                 if (
-                    button.textContent.includes('MetaMask') &&
+                    button.textContent.includes('OKX Wallet') &&
                     !button.hasAttribute('disabled')
                 ) {
                     button.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2061,7 +2061,7 @@
     const SelectMetaMask = setInterval(() => {
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
-            if (button.textContent.includes('MetaMask') &&
+            if (button.textContent.includes('OKX Wallet') &&
                 !button.hasAttribute('disabled')) {
                 button.click();
                 clearInterval(SelectMetaMask);
@@ -2155,7 +2155,7 @@
     const SelectMetaMask = setInterval(() => {
         const buttons = document.querySelectorAll('div');
         buttons.forEach(button => {
-            if (button.textContent.includes('MetaMask') &&
+            if (button.textContent.includes('OKX Wallet') &&
                 !button.hasAttribute('disabled')) {
                 button.click();
                 clearInterval(SelectMetaMask);
@@ -2260,7 +2260,7 @@
     const SelectMetaMask = setInterval(() => {
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
-            if (button.textContent.includes('MetaMask') &&
+            if (button.textContent.includes('OKX Wallet') &&
                 !button.hasAttribute('disabled')) {
                 button.click();
                 clearInterval(SelectMetaMask);
@@ -2349,7 +2349,7 @@
     const SelectMetaMask = setInterval(() => {
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
-            if (button.textContent.includes('MetaMask') &&
+            if (button.textContent.includes('OKX Wallet') &&
                 !button.hasAttribute('disabled')) {
                 button.click();
                 clearInterval(SelectMetaMask);
@@ -2485,7 +2485,7 @@
     const SelectMetaMask = setInterval(() => {
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
-            if (button.textContent.includes('MetaMask') &&
+            if (button.textContent.includes('OKX Wallet') &&
                 !button.hasAttribute('disabled')) {
                 button.click();
                 clearInterval(SelectMetaMask);
@@ -2900,7 +2900,7 @@
     const MetaMask = setInterval(() => {
         const buttons = document.querySelectorAll('div');
         buttons.forEach(button => {
-            if (button.textContent.trim().includes('MetaMask') &&
+            if (button.textContent.trim().includes('OKX Wallet') &&
                 !button.hasAttribute('disabled')) {
                 button.click();
                 clearInterval(MetaMask);
@@ -3279,7 +3279,7 @@
     const MetaMask = setInterval(() => {
         const buttons = document.querySelectorAll('div');
         buttons.forEach(button => {
-            if (button.textContent.trim().includes('MetaMask') &&
+            if (button.textContent.trim().includes('OKX Wallet') &&
                 !button.hasAttribute('disabled')) {
                 button.click();
                 clearInterval(MetaMask);
@@ -3320,7 +3320,7 @@
     const MetaMask = setInterval(() => {
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
-            if (button.textContent.trim().includes('MetaMask') &&
+            if (button.textContent.trim().includes('OKX Wallet') &&
                 !button.hasAttribute('disabled')) {
                 button.click();
                 clearInterval(MetaMask);
@@ -3365,7 +3365,7 @@
         const OKXWallet = setInterval(() => {
             const buttons = document.querySelectorAll('button.chakra-button.css-1azazgw');
             buttons.forEach(button => {
-                if (button.textContent.trim().includes('MetaMask') &&
+                if (button.textContent.trim().includes('OKX Wallet') &&
                     !button.hasAttribute('disabled')) {
                     button.click();
                     clearInterval(OKXWallet);
