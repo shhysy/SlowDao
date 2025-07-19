@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SlowDao
 // @namespace    http://tampermonkey.net/
-// @version      1.136
+// @version      1.137
 // @description  Auto-updating userscript for SlowDao
 // @author       Your name
 // @match        *://*.accounts.google.com/*
@@ -3507,4 +3507,152 @@
         });
     }, 5000);
     // Your code here...
+})();
+
+
+
+(function() {
+    'use strict';
+
+    if (window.location.hostname !== 'speedrun.enso.build') {
+        console.log('Script only runs');
+        return;
+    }
+
+    // 元素选择器定义
+    const selectors = {
+        element2_1: 'body > div > main > div > div > div.flex.w-full.flex-col.gap-2 > button',
+        input1: 'body > div > main > div > div > form > div:nth-child(1) > div input',
+        input2: 'body > div > main > div > div > form > div:nth-child(2) > div input',
+        input3: 'body > div > main > div > div > form > div:nth-child(3) > div input',
+        element2_3: 'body > div > main > div > div > div.flex.w-full.flex-col.gap-2 > button'
+    };
+
+    // 延迟时间配置（毫秒）
+    const delays = {
+        beforeClick: 3000,  // 点击前延迟 1 秒
+        beforeInput: 800,   // 填充输入框前延迟 0.8 秒
+        afterAction: 1000   // 操作后延迟 1 秒
+    };
+
+    // 操作锁，防止并发执行
+    let isProcessing = false;
+
+    // 生成随机数字（111111~11111111）
+    function getRandomNumber() {
+        return Math.floor(Math.random() * (111111111 - 1111111 + 1)) + 1111111;
+    }
+
+    // 延迟函数
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // 日志输出函数
+    function log(message, type = 'info') {
+        const prefix = type === 'error' ? '❌ 错误' : type === 'success' ? '✅ 成功' : 'ℹ️ 信息';
+        console.log(`${prefix}: ${message}`);
+    }
+
+    // 检查元素是否存在
+    function checkElement(selector) {
+        return document.querySelector(selector);
+    }
+
+    // 模拟点击元素
+    async function clickElement(selector, description) {
+        try {
+            await delay(delays.beforeClick); // 点击前延迟
+            const element = checkElement(selector);
+            if (element) {
+                element.click();
+                log(`点击 ${description}`, 'success');
+                await delay(delays.afterAction); // 操作后延迟
+                return true;
+            }
+            return false;
+        } catch (error) {
+            log(`点击 ${description} 失败：${error}`, 'error');
+            return false;
+        }
+    }
+
+    // 输入随机数字到输入框（使用 document.execCommand）
+    async function fillInput(selector, description) {
+        try {
+            await delay(delays.beforeInput); // 填充前延迟
+            const input = checkElement(selector);
+            if (input && !input.value) { // 仅当输入框为空时填充
+                const randomValue = getRandomNumber().toString();
+                input.focus();
+                input.select();
+                document.execCommand('insertText', false, randomValue);
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                input.blur();
+                log(`输入框 ${description} 已填充值：${input.value}`, 'success');
+                await delay(delays.afterAction); // 操作后延迟
+                return true;
+            }
+            return false;
+        } catch (error) {
+            log(`填充 ${description} 失败：${error}`, 'error');
+            return false;
+        }
+    }
+
+    // 处理操作序列
+    async function performActions() {
+        // 如果正在处理，则跳过
+        if (isProcessing) {
+            log('操作正在进行中，跳过本次执行', 'info');
+            return;
+        }
+
+        // 设置操作锁
+        isProcessing = true;
+        try {
+            // 按顺序执行操作，确保每次操作都有延迟
+            await clickElement(selectors.element2_1, '元素2-1');
+            await fillInput(selectors.input1, '输入框1');
+            await fillInput(selectors.input2, '输入框2');
+            await fillInput(selectors.input3, '输入框3');
+            await clickElement(selectors.element2_3, '元素2-3');
+        } catch (error) {
+            log(`操作序列执行失败：${error}`, 'error');
+        } finally {
+            // 释放操作锁
+            isProcessing = false;
+        }
+    }
+
+    // 实时监控函数
+    function monitorElements() {
+        log('开始实时监控元素', 'info');
+
+        // 使用 MutationObserver 监控 DOM 变化
+        const observer = new MutationObserver(async (mutations, observer) => {
+            // 检测到 DOM 变化时尝试执行操作
+            await performActions();
+        });
+
+        // 观察整个文档的子节点和属性变化
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true
+        });
+
+        // 初始检查
+        (async () => {
+            log('执行初始检查', 'info');
+            await performActions();
+        })();
+    }
+
+    // 页面加载后启动监控
+    window.addEventListener('load', () => {
+        log('页面加载完成，开始执行脚本', 'info');
+        monitorElements();
+    });
 })();
